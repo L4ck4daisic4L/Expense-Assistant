@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #22252a;
+      color: #f8f9fa;
+      position: relative;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #f8f9fa;
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .btn-primary:hover {
+      background-color: #0b5ed7;
+    }
+    .btn-add-expense {
+      background-color: #dc3545;
+      color: white;
+      border-radius: 8px;
+      width: 150px;
+      margin-bottom: 10px;
+    }
+    .btn-add-expense:hover {
+      background-color: #c82333;
+    }
+    .expense-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .expense-header h4 {
+      margin-bottom: 0;
+    }
+    .bottom-left-info {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #2c2f36;
+      color: #f8f9fa;
+      padding: 10px 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+    }
+    .bottom-left-info p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    .form-control, select.form-control {
+      font-size: 14px;
+      padding: 8px;
+      background-color: #343a40;
+      border: 1px solid #444;
+      color: #f8f9fa;
+    }
+    .form-control:focus, select.form-control:focus {
+      background-color: #343a40;
+      color: #f8f9fa;
+      border-color: #0d6efd;
+    }
+    .table th, .table td {
+      padding: 8px;
+      vertical-align: middle;
+      border: 1px solid #444;
+    }
+    .table {
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .btn, .btn-primary, .btn-danger, .btn-success, .btn-sm {
+      padding: 4px 8px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .date-selector-grid {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    .month-selector, .day-selector, .year-selector {
+      position: relative;
+    }
+    .month-display, .day-display, .year-display {
+      font-size: 14px;
+      padding: 8px 12px;
+      background-color: #2c2f36;
+      border: 1px solid #444;
+      border-radius: 8px;
+      min-width: 80px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .month-display-text, .day-display-text, .year-display-text {
+      display: inline-block;
+    }
+    .month-dropdown, .day-dropdown, .year-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      display: none;
+      background-color: #2c2f36;
+      border: 1px solid #444;
+      border-radius: 8px;
+      min-width: 80px;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #444 #2c2f36;
+    }
+    .month-dropdown.show, .day-dropdown.show, .year-dropdown.show {
+      display: block;
+    }
+    .month-dropdown-item, .day-dropdown-item, .year-dropdown-item {
+      padding: 8px 12px;
+      color: #f8f9fa;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+    }
+    .month-dropdown-item:hover, .day-dropdown-item:hover, .year-dropdown-item:hover {
+      background-color: #343a40;
+    }
+    .gear-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #2c2f36;
+      color: #f8f9fa;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+    }
+    .gear-btn:hover {
+      background-color: #343a40;
+    }
+    .modal-content {
+      background-color: #2c2f36;
+      color: #f8f9fa;
+    }
+    .modal-footer .btn {
+      margin-bottom: 0;
+    }
+    .back-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #22252a;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid #444;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      background-color: #343a40;
+    }
+
+    /* Theme-specific styles from Home.html */
+    .theme-candy { background-color: #ff80bf; color: #fff; --accent: #ff3399; }
+    .theme-bleed { background-color: #e20074; color: #fff; --accent: #ff66b2; }
+    .theme-midnight { background-color: #002b36; color: #839496; --accent: #b58900; }
+    .theme-sea { background-color: #1c2526; color: #c3e6cb; --accent: #4db6ac; }
+    .theme-howl { background-color: #011627; color: #d6deeb; --accent: #82aaff; }
+    .theme-dawn { background-color: #2d2e2c; color: #fff; --accent: #ff7043; }
+    .theme-night { background-color: #1e222a; color: #abb2bf; --accent: #98c379; }
+    .theme-drank { background-color: #0f111a; color: #acb4c2; --accent: #5c6370; }
+    .theme-eve { background-color: #f4eefd; color: #4b294b; --accent: #d08770; }
+    .theme-gray { background-color: #3c3c3c; color: #cccccc; --accent: #87afaf; }
+    .theme-ocean { background-color: #2b303b; color: #c0c5ce; --accent: #8fa1b3; }
+    .theme-auro { background-color: #1b1e2b; color: #e6e6e6; --accent: #ff6f61; }
+    .theme-pm { background-color: #2c1d4b; color: #d7d7ff; --accent: #957fb8; }
+    .theme-ember { background-color: #1b1818; color: #d4b7a3; --accent: #ff6b6b; }
+    .theme-flare { background-color: #451804; color: #f4e6a2; --accent: #ff4500; }
+
+    /* Theme overrides for Bootstrap elements */
+    body[class*="theme-"] .btn-primary, body[class*="theme-"] .btn-success, body[class*="theme-"] .btn-danger {
+      background-color: var(--accent);
+      border-color: var(--accent);
+    }
+    body[class*="theme-"] .btn-primary:hover, body[class*="theme-"] .btn-success:hover, body[class*="theme-"] .btn-danger:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    body[class*="theme-"] .table th {
+      background-color: var(--accent);
+    }
+    body[class*="theme-"] .modal-content {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      border: 1px solid #444;
+    }
+    body[class*="theme-"] .form-control, body[class*="theme-"] select.form-control {
+      background-color: rgba(0, 0, 0, 0.5);
+      border-color: #444;
+      color: #fff;
+    }
+    body[class*="theme-"] .form-control:focus, body[class*="theme-"] select.form-control:focus {
+      border-color: var(--accent);
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    body[class*="theme-"] .bottom-left-info {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    body[class*="theme-"] .date-selector-grid .month-display,
+    body[class*="theme-"] .date-selector-grid .day-display,
+    body[class*="theme-"] .date-selector-grid .year-display {
+      background-color: rgba(0, 0, 0, 0.5);
+      border-color: #444;
+    }
+    body[class*="theme-"] .month-dropdown,
+    body[class*="theme-"] .day-dropdown,
+    body[class*="theme-"] .year-dropdown {
+      background-color: rgba(0, 0, 0, 0.5);
+      border-color: #444;
+    }
+    body[class*="theme-"] .month-dropdown-item:hover,
+    body[class*="theme-"] .day-dropdown-item:hover,
+    body[class*="theme-"] .year-dropdown-item:hover {
+      background-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <!-- Date Selector Grid -->
+    <div class="date-selector-grid">
+      <div class="month-selector">
+        <span class="month-display" onclick="toggleMonthDropdown()"><span class="month-display-text" id="month-display">March</span></span>
+        <div class="month-dropdown" id="month-dropdown">
+          <a class="month-dropdown-item" onclick="selectMonth('jan')">January</a>
+          <a class="month-dropdown-item" onclick="selectMonth('feb')">February</a>
+          <a class="month-dropdown-item" onclick="selectMonth('mar')">March</a>
+          <a class="month-dropdown-item" onclick="selectMonth('apr')">April</a>
+          <a class="month-dropdown-item" onclick="selectMonth('may')">May</a>
+          <a class="month-dropdown-item" onclick="selectMonth('jun')">June</a>
+          <a class="month-dropdown-item" onclick="selectMonth('jul')">July</a>
+          <a class="month-dropdown-item" onclick="selectMonth('aug')">August</a>
+          <a class="month-dropdown-item" onclick="selectMonth('sep')">September</a>
+          <a class="month-dropdown-item" onclick="selectMonth('oct')">October</a>
+        </div>
+      </div>
+      <div class="day-selector">
+        <span class="day-display" onclick="toggleDayDropdown()"><span class="day-display-text" id="day-display">15</span></span>
+        <div class="day-dropdown" id="day-dropdown">
+          <!-- Dynamic days will be populated here -->
+        </div>
+      </div>
+      <div class="year-selector">
+        <span class="year-display" onclick="toggleYearDropdown()"><span class="year-display-text" id="year-display">2025</span></span>
+        <div class="year-dropdown" id="year-dropdown">
+          <a class="year-dropdown-item" onclick="selectYear(2025)">2025</a>
+          <a class="year-dropdown-item" onclick="selectYear(2026)">2026</a>
+          <a class="year-dropdown-item" onclick="selectYear(2027)">2027</a>
+          <a class="year-dropdown-item" onclick="selectYear(2028)">2028</a>
+          <a class="year-dropdown-item" onclick="selectYear(2029)">2029</a>
+          <a class="year-dropdown-item" onclick="selectYear(2030)">2030</a>
+          <a class="year-dropdown-item" onclick="selectYear(2031)">2031</a>
+          <a class="year-dropdown-item" onclick="selectYear(2032)">2032</a>
+          <a class="year-dropdown-item" onclick="selectYear(2033)">2033</a>
+          <a class="year-dropdown-item" onclick="selectYear(2034)">2034</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gear Icon -->
+    <button class="gear-btn" data-bs-toggle="modal" data-bs-target="#optionsModal">
+      <i class="fas fa-gear"></i>
+    </button>
+
+    <!-- Options Modal -->
+    <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="optionsModalLabel">Options</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex flex-column gap-2">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIncomeModal">Add Income</button>
+              <a href="categories.html" class="btn btn-primary">Manage Categories</a>
+              <a href="summary.html" class="btn btn-primary">View Summary</a>
+            </div>
+            <div class="mt-3">
+              <input type="checkbox" id="use-system-clock" onchange="toggleSystemClock()">
+              <label for="use-system-clock" class="ms-2">Use system clock for date</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Income Modal -->
+    <div class="modal fade" id="addIncomeModal" tabindex="-1" aria-labelledby="addIncomeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addIncomeModalLabel">Add Income</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="income-amount" class="form-label">Amount</label>
+              <div class="input-group">
+                <span class="input-group-text">₱</span>
+                <input type="number" id="income-amount" class="form-control" placeholder="Enter amount">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="income-month" class="form-label">Month</label>
+              <select id="income-month" class="form-control">
+                <option value="jan">January</option>
+                <option value="feb">February</option>
+                <option value="mar" selected>March</option>
+                <option value="apr">April</option>
+                <option value="may">May</option>
+                <option value="jun">June</option>
+                <option value="jul">July</option>
+                <option value="aug">August</option>
+                <option value="sep">September</option>
+                <option value="oct">October</option>
+                <option value="nov">November</option>
+                <option value="dec">December</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="income-day" class="form-label">Day</label>
+              <select id="income-day" class="form-control">
+                <!-- Dynamic days will be populated here -->
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="income-year" class="form-label">Year</label>
+              <select id="income-year" class="form-control">
+                <option value="2025" selected>2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031</option>
+                <option value="2032">2032</option>
+                <option value="2033">2033</option>
+                <option value="2034">2034</option>
+              </select>
+            </div>
+            <div class="mt-3">
+              <h6>Saved Incomes</h6>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Amount (₱)</th>
+                    <th>Date</th>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="income-table-body">
+                  <!-- Dynamic incomes will be shown here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="addIncome()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Date Title -->
+    <h1 class="text-center" id="date-title">March 15, 2025</h1>
+
+    <!-- Expense Section -->
+    <div class="expense-section">
+      <div class="expense-header">
+        <h4>Expenses</h4>
+        <button class="btn btn-add-expense" onclick="addExpenseRow()">+ Add Expense</button>
+      </div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Main Category</th>
+            <th>Sub Category</th>
+            <th>Amount</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="expense-table-body">
+          <!-- Expense rows will be added here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <a href="Home.html" class="back-btn">Back</a>
+
+  <!-- Bottom-left corner info -->
+  <div class="bottom-left-info">
+    <p><strong>Budget:</strong> ₱ <span id="income-total">0.00</span></p>
+    <p><strong>Expense:</strong> ₱ <span id="expense-total">0.00</span></p>
+    <p><strong>Balance:</strong> ₱ <span id="balance-total">0.00</span></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let categories = JSON.parse(localStorage.getItem('categories')) || {
+      "Housing": [
+        "Rent/Mortgage",
+        "Property Taxes",
+        "Home Insurance",
+        "Utilities (Water, Electricity, Gas, etc.)",
+        "Home Repairs/Maintenance",
+        "HOA Fees (Homeowners Association)"
+      ],
+      "Transportation": [
+        "Gas/Fuel",
+        "Car Loan Payments",
+        "Car Insurance",
+        "Public Transportation",
+        "Vehicle Maintenance (Oil Changes, Repairs)",
+        "Parking/Tolls",
+        "Ride-sharing (Uber, Lyft, etc.)"
+      ],
+      "Food": [
+        "Dining Out",
+        "Coffee/Takeout",
+        "Meal Prep Services"
+      ],
+      "Health & Insurance": [
+        "Health Insurance",
+        "Medical Bills/Co-pays",
+        "Dental Insurance",
+        "Prescription Medications",
+        "Gym Membership",
+        "Vision Care (Glasses, Contact Lenses, etc.)",
+        "Health/Wellness Products"
+      ],
+      "Personal Care": [
+        "Haircuts",
+        "Skincare Products",
+        "Makeup",
+        "Toiletries (Shampoo, Soap, etc.)",
+        "Clothing & Accessories",
+        "Shoes/Footwear"
+      ],
+      "Entertainment": [
+        "Subscriptions (Netflix, Spotify, etc.)",
+        "Streaming Services (Disney+, Amazon Prime, etc.)",
+        "Movies, Events, Concerts",
+        "Video Games/Subscriptions",
+        "Books, Magazines, Hobbies"
+      ],
+      "Debt Repayments": [
+        "Credit Card Payments",
+        "Personal Loans",
+        "Student Loans",
+        "Other Loan Repayments"
+      ],
+      "Savings & Investments": [
+        "Emergency Fund",
+        "Retirement Savings (401k, IRA)",
+        "Investment Contributions (Stocks, Bonds)",
+        "Education Savings (529 Plan)"
+      ],
+      "Education & Learning": [
+        "Tuition Fees",
+        "Books & Supplies",
+        "Online Courses/Certifications",
+        "Workshops/Conferences"
+      ],
+      "Childcare & Education": [
+        "Daycare",
+        "School Fees",
+        "Extracurricular Activities",
+        "Clothing & Supplies"
+      ],
+      "Pets": [
+        "Pet Food",
+        "Veterinary Bills",
+        "Pet Insurance",
+        "Pet Grooming"
+      ],
+      "Gifts & Donations": [
+        "Birthday Gifts",
+        "Holiday Gifts",
+        "Charitable Donations"
+      ],
+      "Miscellaneous": [
+        "Bank Fees",
+        "Legal Fees",
+        "Subscriptions (Magazines, Memberships)",
+        "Office Supplies",
+        "Emergency Expenses",
+        "Travel Expenses (Hotel, Flights, etc.)",
+        "Others"
+      ]
+    };
+
+    let expenseList = [];
+    let currentMonth = 'mar';
+    let currentDay = 15;
+    let currentYear = 2025;
+
+    const monthNames = {
+      jan: 'January', feb: 'February', mar: 'March', apr: 'April', may: 'May', jun: 'June',
+      jul: 'July', aug: 'August', sep: 'September', oct: 'October', nov: 'November', dec: 'December'
+    };
+
+    const monthOrder = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    const yearOrder = Array.from({length: 26}, (_, i) => 2025 + i);
+
+    // Theme handling
+    function applyTheme(theme) {
+      document.body.className = `theme-${theme}`;
+    }
+
+    function getDaysInMonth(month, year) {
+      const monthIndex = monthOrder.indexOf(month);
+      if (monthIndex === 1) {
+        const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        return isLeapYear ? 29 : 28;
+      }
+      if ([3, 5, 8, 10].includes(monthIndex)) {
+        return 30;
+      }
+      return 31;
+    }
+
+    function populateDayDropdown() {
+      const dayDropdown = document.getElementById('day-dropdown');
+      dayDropdown.innerHTML = '';
+      const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+      for (let i = 1; i <= daysInMonth; i++) {
+        const item = document.createElement('a');
+        item.className = 'day-dropdown-item';
+        item.textContent = i;
+        item.onclick = () => selectDay(i);
+        dayDropdown.appendChild(item);
+      }
+      if (currentDay > daysInMonth) {
+        currentDay = daysInMonth;
+        document.getElementById('day-display').textContent = currentDay;
+      }
+    }
+
+    function populateIncomeDayDropdown() {
+      const incomeDaySelect = document.getElementById('income-day');
+      incomeDaySelect.innerHTML = '';
+      const month = document.getElementById('income-month').value;
+      const year = parseInt(document.getElementById('income-year').value);
+      const daysInMonth = getDaysInMonth(month, year);
+      for (let i = 1; i <= daysInMonth; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        if (i === currentDay && month === currentMonth && year === currentYear) {
+          option.selected = true;
+        }
+        incomeDaySelect.appendChild(option);
+      }
+    }
+
+    function loadData() {
+      const savedData = localStorage.getItem(`budget_${currentYear}_${currentMonth}_${currentDay}`);
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        expenseList = data.expenseList || [];
+      } else {
+        expenseList = [];
+      }
+      updateInfo();
+    }
+
+    function saveData() {
+      const data = {
+        incomeList: JSON.parse(localStorage.getItem(`budget_${currentYear}_${currentMonth}_${currentDay}`))?.incomeList || [],
+        expenseList
+      };
+      localStorage.setItem(`budget_${currentYear}_${currentMonth}_${currentDay}`, JSON.stringify(data));
+      updateInfo();
+    }
+
+    function addIncome() {
+      const amount = parseFloat(document.getElementById('income-amount').value);
+      const month = document.getElementById('income-month').value;
+      const day = parseInt(document.getElementById('income-day').value);
+      const year = parseInt(document.getElementById('income-year').value);
+
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount.');
+        return;
+      }
+
+      const key = `budget_${year}_${month}_${day}`;
+      const data = JSON.parse(localStorage.getItem(key)) || { incomeList: [], expenseList: [] };
+      data.incomeList.push(amount);
+      localStorage.setItem(key, JSON.stringify(data));
+
+      document.getElementById('income-amount').value = '';
+      displayIncomes();
+      updateInfo();
+    }
+
+    function deleteIncome(modalYear, modalMonth, day, index) {
+      if (confirm('Are you sure you want to delete this income?')) {
+        const key = `budget_${modalYear}_${modalMonth}_${day}`;
+        const data = JSON.parse(localStorage.getItem(key)) || { incomeList: [], expenseList: [] };
+        data.incomeList.splice(index, 1);
+        localStorage.setItem(key, JSON.stringify(data));
+        displayIncomes();
+        updateInfo();
+      }
+    }
+
+    function displayIncomes() {
+      const tableBody = document.getElementById('income-table-body');
+      tableBody.innerHTML = '';
+      const modalMonth = document.getElementById('income-month').value;
+      const modalYear = parseInt(document.getElementById('income-year').value);
+      const daysInMonth = getDaysInMonth(modalMonth, modalYear);
+      let incomes = [];
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = `budget_${modalYear}_${modalMonth}_${day}`;
+        const data = JSON.parse(localStorage.getItem(key)) || { incomeList: [], expenseList: [] };
+        data.incomeList.forEach((amount, index) => {
+          incomes.push({ amount, day, index });
+        });
+      }
+
+      incomes.forEach(({ amount, day, index }) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${amount.toFixed(2)}</td>
+          <td>${day}</td>
+          <td>${monthNames[modalMonth]}</td>
+          <td>${modalYear}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteIncome(${modalYear}, '${modalMonth}', ${day}, ${index})">Delete</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function addExpenseRow() {
+      const row = {
+        description: '',
+        mainCategory: '',
+        subCategory: '',
+        amount: 0
+      };
+      expenseList.push(row);
+      displayExpense();
+      saveData();
+    }
+
+    function deleteExpenseRow(index) {
+      if (confirm('Are you sure you want to delete this expense?')) {
+        expenseList.splice(index, 1);
+        displayExpense();
+        saveData();
+      }
+    }
+
+    function displayExpense() {
+      const expenseTableBody = document.getElementById('expense-table-body');
+      expenseTableBody.innerHTML = '';
+      expenseList.forEach((expense, index) => {
+        const { description, mainCategory, subCategory, amount } = expense;
+        const row = document.createElement('tr');
+
+        // Description
+        const descriptionTd = document.createElement('td');
+        descriptionTd.innerHTML = `<input type="text" value="${description || ''}" class="form-control" onchange="updateExpenseField(${index}, 'description', this.value)">`;
+
+        // Main Category
+        const mainCategoryTd = document.createElement('td');
+        const mainCategorySelect = document.createElement('select');
+        mainCategorySelect.className = 'form-control';
+        mainCategorySelect.innerHTML = `<option value="" disabled ${mainCategory ? '' : 'selected'}>Select a category</option>`;
+        Object.keys(categories).forEach(category => {
+          const option = document.createElement('option');
+          option.value = category;
+          option.textContent = category;
+          if (category === mainCategory) option.selected = true;
+          mainCategorySelect.appendChild(option);
+        });
+        mainCategorySelect.onchange = () => {
+          updateExpenseField(index, 'mainCategory', mainCategorySelect.value);
+          updateExpenseField(index, 'subCategory', '');
+          displayExpense();
+        };
+        mainCategoryTd.appendChild(mainCategorySelect);
+
+        // Sub Category
+        const subCategoryTd = document.createElement('td');
+        const subCategorySelect = document.createElement('select');
+        subCategorySelect.className = 'form-control';
+        subCategorySelect.innerHTML = `<option value="" disabled ${subCategory ? '' : 'selected'}>Select a subcategory</option>`;
+        if (mainCategory && categories[mainCategory] && categories[mainCategory].length > 0) {
+          categories[mainCategory].forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub;
+            option.textContent = sub;
+            if (sub === subCategory) option.selected = true;
+            subCategorySelect.appendChild(option);
+          });
+        }
+        subCategorySelect.onchange = () => updateExpenseField(index, 'subCategory', subCategorySelect.value);
+        subCategoryTd.appendChild(subCategorySelect);
+
+        // Amount
+        const amountTd = document.createElement('td');
+        amountTd.innerHTML = `<input type="number" value="${amount || 0}" class="form-control" onchange="updateExpenseField(${index}, 'amount', this.value)">`;
+
+        // Action
+        const actionTd = document.createElement('td');
+        actionTd.innerHTML = `<button class="btn btn-danger btn-sm" onclick="deleteExpenseRow(${index})">Delete</button>`;
+
+        row.appendChild(descriptionTd);
+        row.appendChild(mainCategoryTd);
+        row.appendChild(subCategoryTd);
+        row.appendChild(amountTd);
+        row.appendChild(actionTd);
+        expenseTableBody.appendChild(row);
+      });
+    }
+
+    function updateExpenseField(index, field, value) {
+      expenseList[index][field] = field === 'amount' ? parseFloat(value) || 0 : value;
+      saveData();
+    }
+
+    function updateInfo() {
+      let totalIncome = 0;
+      let totalExpense = 0;
+      const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = `budget_${currentYear}_${currentMonth}_${day}`;
+        try {
+          const data = JSON.parse(localStorage.getItem(key)) || { incomeList: [], expenseList: [] };
+          totalIncome += (data.incomeList || []).reduce((sum, amount) => sum + (parseFloat(amount) || 0), 0);
+          totalExpense += (data.expenseList || []).reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
+        } catch (e) {
+          console.error(`Error parsing data for ${key}:`, e);
+        }
+      }
+      const balance = totalIncome - totalExpense;
+      document.getElementById('income-total').textContent = totalIncome.toFixed(2);
+      document.getElementById('expense-total').textContent = totalExpense.toFixed(2);
+      document.getElementById('balance-total').textContent = balance.toFixed(2);
+    }
+
+    function updateDateTitle() {
+      document.getElementById('date-title').textContent = `${monthNames[currentMonth]} ${currentDay}, ${currentYear}` || 'Invalid date';
+      document.getElementById('month-display').textContent = monthNames[currentMonth] || 'Invalid month';
+      document.getElementById('day-display').textContent = currentDay;
+      document.getElementById('year-display').textContent = currentYear;
+    }
+
+    function toggleMonthDropdown() {
+      const monthDropdown = document.getElementById('month-dropdown');
+      const dayDropdown = document.getElementById('day-dropdown');
+      const yearDropdown = document.getElementById('year-dropdown');
+      monthDropdown.classList.toggle('show');
+      dayDropdown.classList.remove('show');
+      yearDropdown.classList.remove('show');
+    }
+
+    function toggleDayDropdown() {
+      const monthDropdown = document.getElementById('month-dropdown');
+      const dayDropdown = document.getElementById('day-dropdown');
+      const yearDropdown = document.getElementById('year-dropdown');
+      dayDropdown.classList.toggle('show');
+      monthDropdown.classList.remove('show');
+      yearDropdown.classList.remove('show');
+    }
+
+    function toggleYearDropdown() {
+      const monthDropdown = document.getElementById('month-dropdown');
+      const dayDropdown = document.getElementById('day-dropdown');
+      const yearDropdown = document.getElementById('year-dropdown');
+      yearDropdown.classList.toggle('show');
+      monthDropdown.classList.remove('show');
+      dayDropdown.classList.remove('show');
+    }
+
+    function selectMonth(month) {
+      currentMonth = month;
+      populateDayDropdown();
+      loadData();
+      updateDateTitle();
+      displayExpense();
+      updateInfo();
+      document.getElementById('month-dropdown').classList.remove('show');
+    }
+
+    function selectDay(day) {
+      currentDay = day;
+      loadData();
+      updateDateTitle();
+      displayExpense();
+      updateInfo();
+      document.getElementById('day-dropdown').classList.remove('show');
+    }
+
+    function selectYear(year) {
+      currentYear = year;
+      populateDayDropdown();
+      loadData();
+      updateDateTitle();
+      displayExpense();
+      updateInfo();
+      document.getElementById('year-dropdown').classList.remove('show');
+    }
+
+    function toggleSystemClock() {
+      const useSystemClock = document.getElementById('use-system-clock').checked;
+      localStorage.setItem('useSystemClock', useSystemClock);
+      if (useSystemClock) {
+        setSystemDate();
+      }
+    }
+
+    function setSystemDate() {
+      const today = new Date();
+      currentYear = today.getFullYear();
+      if (currentYear < 2025) currentYear = 2025;
+      if (currentYear > 2050) currentYear = 2050;
+      const monthIndex = today.getMonth();
+      currentMonth = monthOrder[monthIndex];
+      currentDay = today.getDate();
+      const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+      if (currentDay > daysInMonth) currentDay = daysInMonth;
+      populateDayDropdown();
+      updateDateTitle();
+      loadData();
+      displayExpense();
+      updateInfo();
+    }
+
+    function makeDropdownDraggable(dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      let isDragging = false;
+      let startY, startScrollTop;
+
+      dropdown.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains(dropdownId + '-item')) return;
+        isDragging = true;
+        startY = e.clientY;
+        startScrollTop = dropdown.scrollTop;
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          const deltaY = startY - e.clientY;
+          dropdown.scrollTop = startScrollTop + deltaY;
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    }
+
+    window.onload = function() {
+      const savedTheme = localStorage.getItem('selectedTheme') || 'candy';
+      applyTheme(savedTheme);
+
+      const useSystemClock = localStorage.getItem('useSystemClock') === 'true';
+      document.getElementById('use-system-clock').checked = useSystemClock;
+      if (useSystemClock) {
+        setSystemDate();
+      } else {
+        populateDayDropdown();
+        updateDateTitle();
+        loadData();
+        displayExpense();
+        updateInfo();
+      }
+      makeDropdownDraggable('month-dropdown');
+      makeDropdownDraggable('day-dropdown');
+      makeDropdownDraggable('year-dropdown');
+      populateIncomeDayDropdown();
+      document.getElementById('income-month').onchange = () => {
+        populateIncomeDayDropdown();
+        displayIncomes();
+      };
+      document.getElementById('income-year').onchange = () => {
+        populateIncomeDayDropdown();
+        displayIncomes();
+      };
+      document.getElementById('income-day').onchange = displayIncomes;
+    };
+
+    document.addEventListener('click', function(event) {
+      const monthDisplay = document.querySelector('.month-display');
+      const dayDisplay = document.querySelector('.day-display');
+      const yearDisplay = document.querySelector('.year-display');
+      const monthDropdown = document.getElementById('month-dropdown');
+      const dayDropdown = document.getElementById('day-dropdown');
+      const yearDropdown = document.getElementById('year-dropdown');
+      if (!monthDisplay.contains(event.target) && !monthDropdown.contains(event.target)) {
+        monthDropdown.classList.remove('show');
+      }
+      if (!dayDisplay.contains(event.target) && !dayDropdown.contains(event.target)) {
+        dayDropdown.classList.remove('show');
+      }
+      if (!yearDisplay.contains(event.target) && !yearDropdown.contains(event.target)) {
+        yearDropdown.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>

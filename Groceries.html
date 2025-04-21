@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Theme-specific styles (same as Home.html) */
+    .theme-candy { background-color: #ff80bf; color: #fff; --accent: #ff3399; }
+    .theme-bleed { background-color: #e20074; color: #fff; --accent: #ff66b2; }
+    .theme-midnight { background-color: #002b36; color: #839496; --accent: #b58900; }
+    .theme-sea { background-color: #1c2526; color: #c3e6cb; --accent: #4db6ac; }
+    .theme-howl { background-color: #011627; color: #d6deeb; --accent: #82aaff; }
+    .theme-dawn { background-color: #2d2e2c; color: #fff; --accent: #ff7043; }
+    .theme-night { background-color: #1e222a; color: #abb2bf; --accent: #98c379; }
+    .theme-drank { background-color: #0f111a; color: #acb4c2; --accent: #5c6370; }
+    .theme-eve { background-color: #f4eefd; color: #4b294b; --accent: #d08770; }
+    .theme-gray { background-color: #3c3c3c; color: #cccccc; --accent: #87afaf; }
+    .theme-ocean { background-color: #2b303b; color: #c0c5ce; --accent: #8fa1b3; }
+    .theme-auro { background-color: #1b1e2b; color: #e6e6e6; --accent: #ff6f61; }
+    .theme-pm { background-color: #2c1d4b; color: #d7d7ff; --accent: #957fb8; }
+    .theme-ember { background-color: #1b1818; color: #d4b7a3; --accent: #ff6b6b; }
+    .theme-flare { background-color: #451804; color: #f4e6a2; --accent: #ff4500; }
+
+    /* Apply accent color to buttons */
+    .theme-candy button:not(.back-btn),
+    .theme-bleed button:not(.back-btn),
+    .theme-midnight button:not(.back-btn),
+    .theme-sea button:not(.back-btn),
+    .theme-howl button:not(.back-btn),
+    .theme-dawn button:not(.back-btn),
+    .theme-night button:not(.back-btn),
+    .theme-drank button:not(.back-btn),
+    .theme-eve button:not(.back-btn),
+    .theme-gray button:not(.back-btn),
+    .theme-ocean button:not(.back-btn),
+    .theme-auro button:not(.back-btn),
+    .theme-pm button:not(.back-btn),
+    .theme-ember button:not(.back-btn),
+    .theme-flare button:not(.back-btn) {
+      background-color: var(--accent);
+    }
+
+    /* Input field styles for light and dark themes */
+    .theme-eve input[type="text"],
+    .theme-eve input[type="number"],
+    .theme-candy input[type="text"],
+    .theme-candy input[type="number"],
+    .theme-bleed input[type="text"],
+    .theme-bleed input[type="number"] {
+      color: #000;
+      background-color: #fff;
+    }
+    .theme-midnight input[type="text"],
+    .theme-midnight input[type="number"],
+    .theme-sea input[type="text"],
+    .theme-sea input[type="number"],
+    .theme-howl input[type="text"],
+    .theme-howl input[type="number"],
+    .theme-dawn input[type="text"],
+    .theme-dawn input[type="number"],
+    .theme-night input[type="text"],
+    .theme-night input[type="number"],
+    .theme-drank input[type="text"],
+    .theme-drank input[type="number"],
+    .theme-gray input[type="text"],
+    .theme-gray input[type="number"],
+    .theme-ocean input[type="text"],
+    .theme-ocean input[type="number"],
+    .theme-auro input[type="text"],
+    .theme-auro input[type="number"],
+    .theme-pm input[type="text"],
+    .theme-pm input[type="number"],
+    .theme-ember input[type="text"],
+    .theme-ember input[type="number"],
+    .theme-flare input[type="text"],
+    .theme-flare input[type="number"] {
+      color: #f8f9fa;
+      background-color: #2c2f36;
+    }
+
+    /* Groceries calculator styles */
+    .groceries-calculator-section {
+      margin-top: 1.5rem;
+    }
+    .groceries-calculator-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .groceries-calculator-info {
+      background-color: #2c2f36;
+      color: #f8f9fa;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.75rem;
+      border: 1px solid #444;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-self: flex-start;
+    }
+    .groceries-calculator-info .separator {
+      color: #f8f9fa;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+    .table th, .table td {
+      border: 1px solid #444;
+      padding: 0.5rem;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    .table th {
+      background-color: var(--accent, #4a90e2);
+      color: #fff;
+    }
+    .table input[type="text"],
+    .table input[type="number"] {
+      width: 100%;
+      padding: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+    }
+    .table .input-group {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .table .quantity-btn {
+      width: 1.875rem;
+      height: 1.875rem;
+      padding: 0;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      background-color: #f8f9fa;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .table .quantity-btn:hover {
+      background-color: #e0e0e0;
+    }
+    .btn-add-grocery, .btn-add-budget {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      background-color: #28a745;
+      color: #fff;
+    }
+    .btn-add-grocery:hover, .btn-add-budget:hover {
+      background-color: #218838;
+    }
+    .btn-danger {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      background-color: #dc3545;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+    .back-btn {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: #2c2f36;
+      color: #f8f9fa;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid #444;
+      text-decoration: none;
+      font-size: 0.875rem;
+      z-index: 10;
+    }
+    .back-btn:hover {
+      background-color: #343a40;
+    }
+
+    /* Modal styles */
+    #infoModal {
+      transition: opacity 0.3s ease;
+    }
+    .modal-content {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid white;
+      color: white;
+      max-width: 500px;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      position: relative;
+    }
+    .info-icon {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      z-index: 20;
+    }
+    .info-icon:hover {
+      transform: scale(1.1);
+    }
+    .info-icon svg {
+      fill: #ffffff !important;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Grocery List Panel styles */
+    #groceryListPanel {
+      z-index: 30;
+    }
+
+    #groceryListPanel .table th {
+      background-color: var(--accent, #4a90e2);
+      color: #fff;
+    }
+
+    #groceryListPanel .table td {
+      background-color: transparent;
+      color: #fff;
+    }
+
+    #groceryListPanel input[type="text"] {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid #ccc;
+    }
+
+    #groceryListPanel input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Back Button -->
+  <a href="Home.html" class="back-btn">Back</a>
+
+  <!-- Main Content -->
+  <main class="flex-grow p-4">
+    <h1 class="text-2xl font-bold mb-4 text-white text-center">Grocery Assistant</h1>
+    <div class="info-icon" id="infoButton">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+    </div>
+    <!-- Modal -->
+    <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+      <div class="modal-content p-6 w-full max-w-2xl">
+        <h3 class="text-2xl mb-4">How to Use the Grocery Assistant</h3>
+        <div class="text-lg">
+          <h3 class="text-xl font-bold mt-4">Track Total Cost</h3>
+          <ul class="list-disc pl-5">
+            <li>The calculator will automatically compute the Total Cost of all items.</li>
+            <li>It will also show your Remaining Balance after subtracting the total from your budget.</li>
+          </ul>
+          <h3 class="text-xl font-bold mt-4">Set Your Budget</h3>
+          <ul class="list-disc pl-5">
+            <li>Click the green “+ Add Budget” button.</li>
+            <li>Enter your total grocery budget in pesos (₱).</li>
+            <li>This will appear at the top under Budget.</li>
+            <li>To edit click “+ Add Budget” button and enter new amount.</li>
+          </ul>
+          <h3 class="text-xl font-bold mt-4">Add Grocery Items</h3>
+          <ul class="list-disc pl-5">
+            <li>Click the green “+ Add Grocery” button.</li>
+            <li>A new row will appear in the table.</li>
+            <li>Fill in the following:</li>
+            <ul class="list-disc pl-5">
+              <li><strong>Item:</strong> Enter the name of the grocery item (e.g., Rice, Eggs).</li>
+              <li><strong>Price:</strong> Enter the price of one unit of the item.</li>
+              <li><strong>Quantity:</strong> Use the plus (+) or minus (−) buttons to adjust quantity.</li>
+            </ul>
+          </ul>
+          <h3 class="text-xl font-bold mt-4">Edit or Delete Items</h3>
+          <ul class="list-disc pl-5">
+            <li>You can update the item’s name, price, or quantity anytime.</li>
+            <li>To remove an item, click the red Delete button.</li>
+          </ul>
+        </div>
+        <button id="closeInfoModal" class="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full">
+          Close
+        </button>
+      </div>
+    </div>
+    <section class="groceries-calculator-section">
+      <div class="groceries-calculator-header">
+        <button class="btn-add-budget" onclick="addBudget()">+ Add Budget</button>
+        <div class="groceries-calculator-info">
+          <span>Budget: ₱ <span id="groceries-calculator-budget-amount">0.00</span></span>
+          <span class="separator"> | </span>
+          <span>Item: <span id="groceries-calculator-item-count">0</span></span>
+          <span class="separator"> | </span>
+          <span>Total: ₱ <span id="groceries-calculator-total-amount">0.00</span></span>
+          <span class="separator"> | </span>
+          <span>Left: ₱ <span id="groceries-calculator-difference">0.00</span></span>
+        </div>
+        <button class="btn-add-grocery" onclick="addGroceryCalculatorRow()">+ Add Entry</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Amount</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="groceries-calculator-table-body"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Grocery List Panel -->
+  <div id="groceryListPanel" class="fixed top-0 right-0 h-full w-80 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div class="flex-grow p-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Grocery List</h2>
+      </div>
+      <button id="addGroceryListItem" class="btn-add-grocery mb-4">+ Add Entry</button>
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th class="w-12">Done</th>
+            <th>Item</th>
+            <th class="w-20">Action</th>
+          </tr>
+        </thead>
+        <tbody id="grocery-list-table-body"></tbody>
+      </table>
+    </div>
+    <button id="closeGroceryListPanel" class="self-end m-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Close</button>
+  </div>
+  <button id="openGroceryListPanel" class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-4 rounded-l-md z-20"><</button>
+
+  <script>
+    // Theme data (same as Home.html)
+    const themes = [
+      { internal: 'pm', display: 'PM' },
+      { internal: 'eve', display: 'Eve' },
+      { internal: 'sea', display: 'Sea' },
+      { internal: 'auro', display: 'Auro' },
+      { internal: 'dawn', display: 'Dawn' },
+      { internal: 'gray', display: 'Gray' },
+      { internal: 'howl', display: 'Howl' },
+      { internal: 'bleed', display: 'Bleed' },
+      { internal: 'candy', display: 'Candy' },
+      { internal: 'drank', display: 'Drank' },
+      { internal: 'ember', display: 'Ember' },
+      { internal: 'flare', display: 'Flare' },
+      { internal: 'night', display: 'Night' },
+      { internal: 'ocean', display: 'Ocean' },
+      { internal: 'midnight', display: 'Midnight' }
+    ];
+
+    // Apply saved theme
+    const savedTheme = localStorage.getItem('selectedTheme') || 'candy';
+    applyTheme(savedTheme);
+
+    function applyTheme(theme) {
+      document.body.className = `min-h-screen flex flex-col theme-${theme}`;
+      document.getElementById('groceryListPanel').className = `fixed top-0 right-0 h-full w-80 theme-${theme} transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col`;
+    }
+
+    // Groceries calculator logic
+    let groceriesCalculatorList = [];
+    let budget = 0;
+
+    // Load data from localStorage
+    function loadData() {
+      const savedData = localStorage.getItem('groceries_calculator');
+      if (savedData) {
+        groceriesCalculatorList = JSON.parse(savedData);
+      }
+      const savedBudget = localStorage.getItem('grocery_budget');
+      if (savedBudget) {
+        budget = parseFloat(savedBudget) || 0;
+      }
+      displayGroceriesCalculator();
+      updateGroceriesCalculatorTotal();
+      updateGroceriesCalculatorItemCount();
+      updateBudgetDisplay();
+      updateDifferenceDisplay();
+    }
+
+    // Save data to localStorage
+    function saveData() {
+      localStorage.setItem('groceries_calculator', JSON.stringify(groceriesCalculatorList));
+      localStorage.setItem('grocery_budget', budget.toString());
+    }
+
+    function addBudget() {
+      const budgetInput = prompt('Enter your budget amount (₱):');
+      if (budgetInput !== null && !isNaN(budgetInput) && budgetInput >= 0) {
+        budget = parseFloat(budgetInput);
+        updateBudgetDisplay();
+        updateDifferenceDisplay();
+        saveData();
+      } else if (budgetInput !== null) {
+        alert('Please enter a valid number for the budget.');
+      }
+    }
+
+    function updateBudgetDisplay() {
+      document.getElementById('groceries-calculator-budget-amount').innerText = budget.toFixed(2);
+    }
+
+    function updateDifferenceDisplay() {
+      const total = groceriesCalculatorList.reduce((sum, item) => sum + (item.amount * item.quantity), 0);
+      const difference = budget - total;
+      document.getElementById('groceries-calculator-difference').innerText = difference.toFixed(2);
+    }
+
+    function addGroceryCalculatorRow() {
+      const row = {
+        description: '',
+        amount: 0,
+        quantity: 1,
+        total: 0
+      };
+      groceriesCalculatorList.push(row);
+      displayGroceriesCalculator();
+      updateGroceriesCalculatorTotal();
+      updateGroceriesCalculatorItemCount();
+      updateDifferenceDisplay();
+      saveData();
+    }
+
+    function deleteGroceryCalculatorRow(index) {
+      if (confirm('Are you sure you want to delete this grocery entry?')) {
+        groceriesCalculatorList.splice(index, 1);
+        displayGroceriesCalculator();
+        updateGroceriesCalculatorTotal();
+        updateGroceriesCalculatorItemCount();
+        updateDifferenceDisplay();
+        saveData();
+      }
+    }
+
+    function displayGroceriesCalculator() {
+      const groceriesCalculatorTableBody = document.getElementById('groceries-calculator-table-body');
+      groceriesCalculatorTableBody.innerHTML = '';
+
+      groceriesCalculatorList.forEach(({ description, amount, quantity, total }, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="text" value="${description}" class="form-control" onchange="updateGroceriesCalculatorField(${index}, 'description', this.value)"></td>
+          <td><input type="number" value="${amount}" class="form-control" min="0" step="0.01" onchange="updateGroceriesCalculatorField(${index}, 'amount', this.value)"></td>
+          <td>
+            <div class="input-group">
+              <button class="quantity-btn" onclick="updateGroceriesCalculatorQuantity(${index}, -1)">-</button>
+              <input type="number" value="${quantity}" class="form-control text-center" min="1" onchange="updateGroceriesCalculatorField(${index}, 'quantity', this.value)" style="width: 60px;">
+              <button class="quantity-btn" onclick="updateGroceriesCalculatorQuantity(${index}, 1)">+</button>
+            </div>
+          </td>
+          <td>₱ ${(amount * quantity).toFixed(2)}</td>
+          <td><button class="btn-danger" onclick="deleteGroceryCalculatorRow(${index})">Delete</button></td>
+        `;
+        groceriesCalculatorTableBody.appendChild(row);
+      });
+    }
+
+    function updateGroceriesCalculatorField(index, field, value) {
+      groceriesCalculatorList[index][field] = (field === 'amount' || field === 'quantity') ? parseFloat(value) || 0 : value;
+      if (field === 'amount' || field === 'quantity') {
+        groceriesCalculatorList[index].total = groceriesCalculatorList[index].amount * groceriesCalculatorList[index].quantity;
+      }
+      displayGroceriesCalculator();
+      updateGroceriesCalculatorTotal();
+      updateGroceriesCalculatorItemCount();
+      updateDifferenceDisplay();
+      saveData();
+    }
+
+    function updateGroceriesCalculatorQuantity(index, change) {
+      let quantity = groceriesCalculatorList[index].quantity + change;
+      if (quantity < 1) quantity = 1; // Prevent quantity from going below 1
+      groceriesCalculatorList[index].quantity = quantity;
+      groceriesCalculatorList[index].total = groceriesCalculatorList[index].amount * quantity;
+      displayGroceriesCalculator();
+      updateGroceriesCalculatorTotal();
+      updateGroceriesCalculatorItemCount();
+      updateDifferenceDisplay();
+      saveData();
+    }
+
+    function updateGroceriesCalculatorTotal() {
+      const total = groceriesCalculatorList.reduce((sum, item) => sum + (item.amount * item.quantity), 0);
+      document.getElementById('groceries-calculator-total-amount').innerText = total.toFixed(2);
+    }
+
+    function updateGroceriesCalculatorItemCount() {
+      const itemCount = groceriesCalculatorList.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('groceries-calculator-item-count').innerText = itemCount;
+    }
+
+    // Modal event listeners
+    document.getElementById('infoButton').addEventListener('click', () => {
+      document.getElementById('infoModal').classList.remove('hidden');
+    });
+
+    document.getElementById('closeInfoModal').addEventListener('click', () => {
+      document.getElementById('infoModal').classList.add('hidden');
+    });
+
+    // Grocery List Panel logic
+    let groceryList = [];
+
+    function loadGroceryListData() {
+      const savedData = localStorage.getItem('grocery_list');
+      if (savedData) {
+        groceryList = JSON.parse(savedData);
+      }
+      displayGroceryList();
+    }
+
+    function saveGroceryListData() {
+      localStorage.setItem('grocery_list', JSON.stringify(groceryList));
+    }
+
+    function addGroceryListItem() {
+      groceryList.push({ name: '', completed: false });
+      displayGroceryList();
+      saveGroceryListData();
+    }
+
+    function updateGroceryListItem(index, field, value) {
+      groceryList[index][field] = value;
+      displayGroceryList();
+      saveGroceryListData();
+    }
+
+    function deleteGroceryListItem(index) {
+      if (confirm('Are you sure you want to delete this grocery item?')) {
+        groceryList.splice(index, 1);
+        displayGroceryList();
+        saveGroceryListData();
+      }
+    }
+
+    function displayGroceryList() {
+      const groceryListTableBody = document.getElementById('grocery-list-table-body');
+      groceryListTableBody.innerHTML = '';
+
+      groceryList.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="updateGroceryListItem(${index}, 'completed', this.checked)">
+          </td>
+          <td>
+            <input type="text" value="${item.name}" class="${item.completed ? 'completed' : ''}" onchange="updateGroceryListItem(${index}, 'name', this.value)">
+          </td>
+          <td>
+            <button class="btn-danger" onclick="deleteGroceryListItem(${index})">Delete</button>
+          </td>
+        `;
+        groceryListTableBody.appendChild(row);
+      });
+    }
+
+    // Panel toggle functionality
+    document.getElementById('openGroceryListPanel').addEventListener('click', () => {
+      document.getElementById('groceryListPanel').classList.remove('translate-x-full');
+    });
+
+    document.getElementById('closeGroceryListPanel').addEventListener('click', () => {
+      document.getElementById('groceryListPanel').classList.add('translate-x-full');
+    });
+
+    document.getElementById('addGroceryListItem').addEventListener('click', addGroceryListItem);
+
+    // Initialize groceries calculator and grocery list
+    window.onload = function() {
+      loadData();
+      loadGroceryListData();
+    };
+  </script>
+</body>
+</html>

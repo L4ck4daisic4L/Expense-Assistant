@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Categories</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #22252a;
+      color: #f8f9fa;
+      padding: 20px;
+    }
+    h1 {
+      color: #f8f9fa;
+      margin-bottom: 20px;
+    }
+    .category-section {
+      margin-bottom: 30px;
+    }
+    .category-list {
+      background-color: #2c2f36;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .subcategory-list {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+    .btn-primary {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+    .btn-primary:hover {
+      background-color: #0b5ed7;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+    .btn-sm {
+      padding: 0.25rem 0.5rem; /* Match .btn-primary padding */
+      font-size: 0.625rem; /* Reduced proportionally for width */
+      width: 48px; /* Same width as .btn-primary */
+    }
+    .form-control {
+      background-color: #343a40;
+      border: 1px solid #444;
+      color: #f8f9fa;
+      margin-bottom: 10px;
+    }
+    .form-control:focus {
+      background-color: #343a40;
+      color: #f8f9fa;
+      border-color: #0d6efd;
+    }
+    .back-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #22252a;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid #444;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      background-color: #343a40;
+    }
+
+    /* Theme-specific styles (from Home.html) */
+    .theme-candy { background-color: #ff80bf; color: #fff; --accent: #ff3399; }
+    .theme-bleed { background-color: #e20074; color: #fff; --accent: #ff66b2; }
+    .theme-midnight { background-color: #002b36; color: #839496; --accent: #b58900; }
+    .theme-sea { background-color: #1c2526; color: #c3e6cb; --accent: #4db6ac; }
+    .theme-howl { background-color: #011627; color: #d6deeb; --accent: #82aaff; }
+    .theme-dawn { background-color: #2d2e2c; color: #fff; --accent: #ff7043; }
+    .theme-night { background-color: #1e222a; color: #abb2bf; --accent: #98c379; }
+    .theme-drank { background-color: #0f111a; color: #acb4c2; --accent: #5c6370; }
+    .theme-eve { background-color: #f4eefd; color: #4b294b; --accent: #d08770; }
+    .theme-gray { background-color: #3c3c3c; color: #cccccc; --accent: #87afaf; }
+    .theme-ocean { background-color: #2b303b; color: #c0c5ce; --accent: #8fa1b3; }
+    .theme-auro { background-color: #1b1e2b; color: #e6e6e6; --accent: #ff6f61; }
+    .theme-pm { background-color: #2c1d4b; color: #d7d7ff; --accent: #957fb8; }
+    .theme-ember { background-color: #1b1818; color: #d4b7a3; --accent: #ff6b6b; }
+    .theme-flare { background-color: #451804; color: #f4e6a2; --accent: #ff4500; }
+
+    /* Text color adjustments for readability */
+    .theme-candy, .theme-candy h1, .theme-candy .form-control, .theme-candy a,
+    .theme-eve, .theme-eve h1, .theme-eve .form-control, .theme-eve a {
+      color: #000;
+    }
+    .theme-bleed, .theme-bleed h1, .theme-bleed .form-control, .theme-bleed a,
+    .theme-midnight, .theme-midnight h1, .theme-midnight .form-control, .theme-midnight a,
+    .theme-sea, .theme-sea h1, .theme-sea .form-control, .theme-sea a,
+    .theme-howl, .theme-howl h1, .theme-howl .form-control, .theme-howl a,
+    .theme-dawn, .theme-dawn h1, .theme-dawn .form-control, .theme-dawn a,
+    .theme-night, .theme-night h1, .theme-night .form-control, .theme-night a,
+    .theme-drank, .theme-drank h1, .theme-drank .form-control, .theme-drank a,
+    .theme-gray, .theme-gray h1, .theme-gray .form-control, .theme-gray a,
+    .theme-ocean, .theme-ocean h1, .theme-ocean .form-control, .theme-ocean a,
+    .theme-auro, .theme-auro h1, .theme-auro .form-control, .theme-auro a,
+    .theme-pm, .theme-pm h1, .theme-pm .form-control, .theme-pm a,
+    .theme-ember, .theme-ember h1, .theme-ember .form-control, .theme-ember a,
+    .theme-flare, .theme-flare h1, .theme-flare .form-control, .theme-flare a {
+      color: #fff;
+    }
+
+    /* Ensure form-control background remains readable */
+    .theme-candy .form-control, .theme-eve .form-control {
+      background-color: #fff; /* White background for dark text */
+      border-color: #444;
+    }
+    .theme-candy .form-control:focus, .theme-eve .form-control:focus {
+      background-color: #fff;
+      color: #000;
+      border-color: #0d6efd;
+    }
+
+    /* Apply accent color to buttons */
+    .theme-candy .btn-primary:not(.back-btn),
+    .theme-bleed .btn-primary:not(.back-btn),
+    .theme-midnight .btn-primary:not(.back-btn),
+    .theme-sea .btn-primary:not(.back-btn),
+    .theme-howl .btn-primary:not(.back-btn),
+    .theme-dawn .btn-primary:not(.back-btn),
+    .theme-night .btn-primary:not(.back-btn),
+    .theme-drank .btn-primary:not(.back-btn),
+    .theme-eve .btn-primary:not(.back-btn),
+    .theme-gray .btn-primary:not(.back-btn),
+    .theme-ocean .btn-primary:not(.back-btn),
+    .theme-auro .btn-primary:not(.back-btn),
+    .theme-pm .btn-primary:not(.back-btn),
+    .theme-ember .btn-primary:not(.back-btn),
+    .theme-flare .btn-primary:not(.back-btn) {
+      background-color: var(--accent);
+      border-color: var(--accent);
+    }
+    .theme-candy .btn-primary:not(.back-btn):hover,
+    .theme-bleed .btn-primary:not(.back-btn):hover,
+    .theme-midnight .btn-primary:not(.back-btn):hover,
+    .theme-sea .btn-primary:not(.back-btn):hover,
+    .theme-howl .btn-primary:not(.back-btn):hover,
+    .theme-dawn .btn-primary:not(.back-btn):hover,
+    .theme-night .btn-primary:not(.back-btn):hover,
+    .theme-drank .btn-primary:not(.back-btn):hover,
+    .theme-eve .btn-primary:not(.back-btn):hover,
+    .theme-gray .btn-primary:not(.back-btn):hover,
+    .theme-ocean .btn-primary:not(.back-btn):hover,
+    .theme-auro .btn-primary:not(.back-btn):hover,
+    .theme-pm .btn-primary:not(.back-btn):hover,
+    .theme-ember .btn-primary:not(.back-btn):hover,
+    .theme-flare .btn-primary:not(.back-btn):hover {
+      background-color: var(--accent);
+      filter: brightness(85%);
+    }
+
+    /* Resize Add buttons to match input field height */
+    .btn-primary:not(.back-btn) {
+      padding: 0.25rem 0.5rem; /* Reduce padding to lower height */
+      font-size: 0.875rem; /* Smaller text to fit height */
+      line-height: 1.4; /* Adjust line-height to reduce height */
+      box-sizing: border-box; /* Ensure padding and borders are included */
+      height: 36px; /* Force height to match rendered input height */
+      color: #fff; /* Default for readability on --accent */
+    }
+
+    /* Adjust button text color for candy and eve themes */
+    .theme-candy .btn-primary:not(.back-btn),
+    .theme-eve .btn-primary:not(.back-btn) {
+      color: #000; /* Better contrast on lighter --accent colors */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Manage Categories</h1>
+
+    <!-- Add Main Category -->
+    <div class="category-section">
+      <h4>Add Main Category</h4>
+      <div class="input-group mb-3">
+        <input type="text" id="main-category-input" class="form-control" placeholder="Enter main category">
+        <button class="btn btn-primary" onclick="addMainCategory()">Add</button>
+      </div>
+    </div>
+
+    <!-- Main Categories List -->
+    <div class="category-section">
+      <h4>Main Categories</h4>
+      <div id="category-list">
+        <!-- Dynamic categories will be shown here -->
+      </div>
+    </div>
+  </div>
+
+    <!-- Back Button -->
+  <a href="Month.html" class="back-btn">Back</a>
+
+  <script>
+    let categories = JSON.parse(localStorage.getItem('categories')) || {
+      "Housing": [
+        "Rent/Mortgage",
+        "Property Taxes",
+        "Home Insurance",
+        "Utilities (Water, Electricity, Gas, etc.)",
+        "Home Repairs/Maintenance",
+        "HOA Fees (Homeowners Association)"
+      ],
+      "Transportation": [
+        "Gas/Fuel",
+        "Car Loan Payments",
+        "Car Insurance",
+        "Public Transportation",
+        "Vehicle Maintenance (Oil Changes, Repairs)",
+        "Parking/Tolls",
+        "Ride-sharing (Uber, Lyft, etc.)"
+      ],
+      "Food": [
+        "Dining Out",
+        "Coffee/Takeout",
+        "Meal Prep Services"
+      ],
+      "Health & Insurance": [
+        "Health Insurance",
+        "Medical Bills/Co-pays",
+        "Dental Insurance",
+        "Prescription Medications",
+        "Gym Membership",
+        "Vision Care (Glasses, Contact Lenses, etc.)",
+        "Health/Wellness Products"
+      ],
+      "Personal Care": [
+        "Haircuts",
+        "Skincare Products",
+        "Makeup",
+        "Toiletries (Shampoo, Soap, etc.)",
+        "Clothing & Accessories",
+        "Shoes/Footwear"
+      ],
+      "Entertainment": [
+        "Subscriptions (Netflix, Spotify, etc.)",
+        "Streaming Services (Disney+, Amazon Prime, etc.)",
+        "Movies, Events, Concerts",
+        "Video Games/Subscriptions",
+        "Books, Magazines, Hobbies"
+      ],
+      "Debt Repayments": [
+        "Credit Card Payments",
+        "Personal Loans",
+        "Student Loans",
+        "Other Loan Repayments"
+      ],
+      "Savings & Investments": [
+        "Emergency Fund",
+        "Retirement Savings (401k, IRA)",
+        "Investment Contributions (Stocks, Bonds)",
+        "Education Savings (529 Plan)"
+      ],
+      "Education & Learning": [
+        "Tuition Fees",
+        "Books & Supplies",
+        "Online Courses/Certifications",
+        "Workshops/Conferences"
+      ],
+      "Childcare & Education": [
+        "Daycare",
+        "School Fees",
+        "Extracurricular Activities",
+        "Clothing & Supplies"
+      ],
+      "Pets": [
+        "Pet Food",
+        "Veterinary Bills",
+        "Pet Insurance",
+        "Pet Grooming"
+      ],
+      "Gifts & Donations": [
+        "Birthday Gifts",
+        "Holiday Gifts",
+        "Charitable Donations"
+      ],
+      "Miscellaneous": [
+        "Bank Fees",
+        "Legal Fees",
+        "Subscriptions (Magazines, Memberships)",
+        "Office Supplies",
+        "Emergency Expenses",
+        "Travel Expenses (Hotel, Flights, etc.)",
+        "Others"
+      ]
+    };
+
+    function saveCategories() {
+      localStorage.setItem('categories', JSON.stringify(categories));
+    }
+
+    function addMainCategory() {
+      const input = document.getElementById('main-category-input');
+      const mainCategory = input.value.trim();
+      if (mainCategory && !categories[mainCategory]) {
+        categories[mainCategory] = [];
+        input.value = '';
+        saveCategories();
+        displayCategories();
+      } else if (categories[mainCategory]) {
+        alert('Main category already exists.');
+      } else {
+        alert('Please enter a valid main category.');
+      }
+    }
+
+    function deleteMainCategory(mainCategory) {
+      if (confirm(`Are you sure you want to delete the main category "${mainCategory}" and all its sub-categories?`)) {
+        delete categories[mainCategory];
+        saveCategories();
+        displayCategories();
+      }
+    }
+
+    function addSubCategory(mainCategory) {
+      const input = document.getElementById(`sub-category-input-${mainCategory}`);
+      const subCategory = input.value.trim();
+      if (subCategory && !categories[mainCategory].includes(subCategory)) {
+        categories[mainCategory].push(subCategory);
+        input.value = '';
+        saveCategories();
+        displayCategories();
+      } else if (categories[mainCategory].includes(subCategory)) {
+        alert('Sub-category already exists.');
+      } else {
+        alert('Please enter a valid sub-category.');
+      }
+    }
+
+    function deleteSubCategory(mainCategory, subCategory) {
+      if (confirm(`Are you sure you want to delete the sub-category "${subCategory}"?`)) {
+        categories[mainCategory] = categories[mainCategory].filter(sub => sub !== subCategory);
+        saveCategories();
+        displayCategories();
+      }
+    }
+
+    function displayCategories() {
+      const categoryList = document.getElementById('category-list');
+      categoryList.innerHTML = '';
+
+      Object.keys(categories).forEach(mainCategory => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category-list';
+
+        const header = document.createElement('div');
+        header.className = 'd-flex justify-content-between align-items-center';
+        header.innerHTML = `
+          <h5 class="mb-0">${mainCategory}</h5>
+          <button class="btn btn-danger btn-sm" onclick="deleteMainCategory('${mainCategory}')">Delete</button>
+        `;
+        categoryDiv.appendChild(header);
+
+        const subCategoryInput = document.createElement('div');
+        subCategoryInput.className = 'input-group mt-2';
+        subCategoryInput.innerHTML = `
+          <input type="text" id="sub-category-input-${mainCategory}" class="form-control" placeholder="Enter sub-category">
+          <button class="btn btn-primary" onclick="addSubCategory('${mainCategory}')">Add</button>
+        `;
+        categoryDiv.appendChild(subCategoryInput);
+
+        const subCategoryList = document.createElement('div');
+        subCategoryList.className = 'subcategory-list';
+        categories[mainCategory].forEach(subCategory => {
+          const subCategoryItem = document.createElement('div');
+          subCategoryItem.className = 'd-flex justify-content-between align-items-center';
+          subCategoryItem.innerHTML = `
+            <span>${subCategory}</span>
+            <button class="btn btn-danger btn-sm" onclick="deleteSubCategory('${mainCategory}', '${subCategory}')">Delete</button>
+          `;
+          subCategoryList.appendChild(subCategoryItem);
+        });
+        categoryDiv.appendChild(subCategoryList);
+
+        categoryList.appendChild(categoryDiv);
+      });
+    }
+
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('selectedTheme') || 'candy';
+      document.body.className = `theme-${savedTheme}`;
+    }
+
+    window.onload = function() {
+      applyTheme();
+      displayCategories();
+    };
+  </script>
+</body>
+</html>
