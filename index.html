@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Income and Expense Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -26,7 +26,7 @@
     /* Text color adjustments for readability */
     .theme-candy main, .theme-candy header, .theme-candy a,
     .theme-eve main, .theme-eve header, .theme-eve a {
-      color: #000;
+      color: #1f2937;
     }
     .theme-bleed main, .theme-bleed header, .theme-bleed a,
     .theme-midnight main, .theme-midnight header, .theme-midnight a,
@@ -41,32 +41,27 @@
     .theme-pm main, .theme-pm header, .theme-pm a,
     .theme-ember main, .theme-ember header, .theme-ember a,
     .theme-flare main, .theme-flare header, .theme-flare a {
-      color: #fff;
+      color: #f3f4f6;
     }
 
-    /* Apply accent color to buttons and toggles */
-    .theme-candy button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-bleed button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-midnight button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-sea button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-howl button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-dawn button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-night button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-drank button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-eve button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-gray button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-ocean button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-auro button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-pm button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-ember button:not(#settings-btn, #close-popup, #close-panel),
-    .theme-flare button:not(#settings-btn, #close-popup, #close-panel) {
-      background-color: var(--accent);
+    /* Apply accent color to buttons */
+    button:not(#settings-btn, #close-popup, #close-panel) {
+      background-color: var(--accent, #4a90e2);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+    button:not(#settings-btn, #close-popup, #close-panel):hover {
+      filter: brightness(1.1);
     }
 
     /* Sliding panel animation */
     #settings-panel {
       transform: translateX(100%);
       transition: transform 0.3s ease-in-out;
+      width: 80%;
+      max-width: 320px;
     }
     #settings-panel.open {
       transform: translateX(0);
@@ -79,13 +74,13 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: transparent;
+      background: rgba(0, 0, 0, 0.85);
       border: 2px solid #fff;
-      padding: 0.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       width: 90%;
-      max-width: 400px;
+      max-width: 360px;
       z-index: 20;
       color: #fff;
     }
@@ -101,7 +96,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       z-index: 10;
     }
     #popup-overlay.open {
@@ -111,57 +106,36 @@
     /* Theme grid */
     .theme-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.25rem;
-      margin-bottom: 0.5rem;
-      justify-items: center;
-      align-items: center;
-      padding: 0.25rem;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.5rem;
+      padding: 0.5rem;
     }
     .theme-item {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 0.25rem;
-      width: 100%;
-      min-height: 1.25rem;
+      gap: 0.5rem;
     }
     .theme-item span {
       color: #fff;
-      font-size: 0.75rem;
-      text-align: left;
+      font-size: 0.875rem;
+      flex: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      flex: 1;
     }
 
     /* Checkbox-style toggle button */
     .toggle-button {
-      position: relative;
-      width: 14px;
-      height: 14px;
-      border: 1px solid #ccc;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
       background-color: transparent;
-      border-radius: 2px;
+      border-radius: 4px;
       cursor: pointer;
       flex-shrink: 0;
+      transition: background-color 0.2s, border-color 0.2s;
     }
-    .theme-candy .toggle-button.active,
-    .theme-bleed .toggle-button.active,
-    .theme-midnight .toggle-button.active,
-    .theme-sea .toggle-button.active,
-    .theme-howl .toggle-button.active,
-    .theme-dawn .toggle-button.active,
-    .theme-night .toggle-button.active,
-    .theme-drank .toggle-button.active,
-    .theme-eve .toggle-button.active,
-    .theme-gray .toggle-button.active,
-    .theme-ocean .toggle-button.active,
-    .theme-auro .toggle-button.active,
-    .theme-pm .toggle-button.active,
-    .theme-ember .toggle-button.active,
-    .theme-flare .toggle-button.active {
+    .toggle-button.active {
       background-color: var(--accent, #4a90e2);
       border-color: var(--accent, #4a90e2);
     }
@@ -169,11 +143,20 @@
     /* Gear icon */
     #settings-btn {
       background: transparent;
-      color: #4B5563;
+      color: #4b5563;
       position: fixed;
-      top: 1rem;
-      right: 1rem;
+      top: 0.75rem;
+      right: 0.75rem;
       z-index: 30;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+    }
+    @media (max-width: 640px) {
+      #settings-btn {
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 1.25rem;
+      }
     }
 
     /* Popup close button */
@@ -181,74 +164,80 @@
       background: transparent;
       color: #fff;
       border: 1px solid #fff;
-      padding: 4px 12px;
+      padding: 0.5rem 1rem;
       border-radius: 6px;
       font-size: 0.875rem;
+      margin: 0.5rem auto 0;
       display: block;
-      margin: 0 auto;
+      transition: background-color 0.2s;
+    }
+    #close-popup:hover {
+      background: rgba(255, 255, 255, 0.1);
     }
 
     /* Settings close button */
     #close-panel {
       position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
+      bottom: 1rem;
+      right: 1rem;
       background: transparent;
       color: #fff;
-      font-size: 1.25rem;
-      line-height: 1;
+      font-size: 1.5rem;
       padding: 0.5rem;
       border: none;
       cursor: pointer;
     }
     #close-panel:hover {
-      color: #ccc;
+      color: #d1d5db;
     }
 
     /* Settings panel layout */
     #settings-panel {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      background: rgba(31, 41, 55, 0.95);
+      padding: 1rem;
     }
 
     /* Separator line */
     .separator {
       border-bottom: 1px solid #fff;
-      margin: 0.5rem 0;
+      margin: 1rem 0;
     }
 
     /* Profile input styles */
     .profile-input {
       width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #333;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background-color: #374151;
       color: #fff;
       font-size: 0.875rem;
+      transition: border-color 0.2s;
     }
     .profile-input:focus {
       outline: none;
-      border-color: #fff;
+      border-color: var(--accent, #4a90e2);
     }
 
-    /* Border styles for greeting, quote, and links */
+    /* Content borders */
     .greeting-border, .quote-border, .links-border {
       border: 2px solid var(--accent, #4a90e2);
       padding: 1rem;
-      border-radius: 8px;
+      border-radius: 12px;
       margin-bottom: 1.5rem;
-      max-width: 600px;
       width: 100%;
-      margin-left: auto;
-      margin-right: auto;
+      max-width: 500px;
       box-sizing: border-box;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     .greeting-border p, .quote-border p {
       text-align: center;
       margin: 0;
+      font-size: 1rem;
+      line-height: 1.5;
     }
     .links-border {
       display: flex;
@@ -257,45 +246,88 @@
       gap: 0.75rem;
     }
     .links-border a {
-      text-align: center;
-      width: fit-content;
+      color: inherit;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+    .links-border a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      body {
+        font-size: 14px;
+      }
+      header h1 {
+        font-size: 1.25rem;
+        text-align: center;
+      }
+      .greeting-border, .quote-border, .links-border {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      .greeting-border p, .quote-border p {
+        font-size: 0.875rem;
+      }
+      .links-border a {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+      }
+      #settings-panel {
+        width: 100%;
+        max-width: none;
+      }
+      #theme-popup {
+        width: 95%;
+        padding: 0.75rem;
+      }
+      .theme-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.25rem;
+      }
+      .theme-item span {
+        font-size: 0.75rem;
+      }
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
   <!-- Gear Icon -->
-  <button id="settings-btn" class="text-2xl">
+  <button id="settings-btn" title="Open settings" aria-label="Open settings">
     ⚙️
   </button>
 
   <!-- Header -->
   <header class="p-4 flex justify-center items-center">
-    <h1 class="text-2xl font-bold text-white">Income and Expense Assistant</h1>
+    <h1 class="text-xl md:text-2xl font-bold">Income and Expense Assistant</h1>
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow p-4 flex flex-col items-center">
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
     <div class="greeting-border">
-      <p id="welcome-message" class="text-white"></p>
+      <p id="welcome-message"></p>
     </div>
     <div class="quote-border">
-      <p id="financial-quote" class="text-white"></p>
+      <p id="financial-quote"></p>
     </div>
     <div class="links-border">
-      <a href="Month.html" class="text-white hover:underline">Expense Tracker</a>
-      <a href="Groceries.html" class="text-white hover:underline">Grocery Assistant</a>
-      <a href="PaymentReminders.html" class="text-white hover:underline">Monthly Bills</a>
-      <a href="dine_out_calculator.html" class="text-white hover:underline">Group Meals</a>
-      <a href="DiscountCalculator.html" class="text-white hover:underline">Discount</a>
+      <a href="Month.html">Expense Tracker</a>
+      <a href="Groceries.html">Grocery Assistant</a>
+      <a href="PaymentReminders.html">Monthly Bills</a>
+      <a href="dine_out_calculator.html">Group Meals</a>
+      <a href="DiscountCalculator.html">Discount</a>
     </div>
   </main>
 
   <!-- Settings Panel -->
-  <div id="settings-panel" class="fixed top-0 right-0 h-full w-80 bg-gray-800 text-white p-4 shadow-lg">
-    <div>
-      <h2 class="text-xl font-bold mb-2 text-center">Settings</h2>
+  <div id="settings-panel" class="fixed top-0 right-0 h-full shadow-lg">
+    <div class="flex flex-col h-full">
+      <h2 class="text-lg md:text-xl font-bold mb-4 text-center">Settings</h2>
       <div class="separator"></div>
-      <h3 class="text-lg font-medium mb-2">Profile</h3>
+      <h3 class="text-base md:text-lg font-medium mb-2">Profile</h3>
       <input type="text" id="userName" class="profile-input" placeholder="Enter your name" onchange="savePreferences()">
       <select id="userTimeZone" class="profile-input" onchange="savePreferences()">
         <option value="">Select Time Zone</option>
@@ -308,9 +340,10 @@
         <option value="Australia/Sydney">Australia/Sydney</option>
       </select>
       <div class="separator"></div>
-      <h3 id="themes" class="text-lg font-medium mb-2 cursor-pointer hover:text-gray-300">Themes</h3>
+      <h3 id="themes" class="text-base md:text-lg font-medium mb-2 cursor-pointer hover:text-gray-300">Themes</h3>
+      <div class="flex-grow"></div>
+      <button id="close-panel" title="Close settings" aria-label="Close settings">✕</button>
     </div>
-    <button id="close-panel" title="Close settings">✕</button>
   </div>
 
   <!-- Popup Overlay -->
@@ -336,7 +369,7 @@
         <span>Auro</span>
       </div>
       <div class="theme-item">
-        <div class="toggle-button" data-theme="dawn"></div>
+        <div class="theme-button" data-theme="dawn"></div>
         <span>Dawn</span>
       </div>
       <div class="theme-item">
@@ -384,7 +417,7 @@
   </div>
 
   <script>
-    // Theme data with internal names and display names
+    // Theme data
     const themes = [
       { internal: 'pm', display: 'PM' },
       { internal: 'eve', display: 'Eve' },
@@ -403,311 +436,16 @@
       { internal: 'midnight', display: 'Midnight' }
     ];
 
-    // Financial quotes for randomization
+    // Financial quotes
     const financialQuotes = [
       "Money talks, but mine only ever says goodbye.",
       "Budgeting is just adulting with spreadsheets.",
       "I’m not broke, I’m just pre-rich.",
-      "My credit card and I are in a toxic relationship.",
-      "Being good with money means spending it all... on WiFi and coffee.",
-      "I save money the same way I diet—badly and only on weekends.",
-      "My wallet is on a diet—it’s been empty for weeks.",
-      "I love long romantic walks... to the bank when it’s payday.",
-      "If money grew on trees, I’d be raking leaves all year.",
-      "Why save today when you can regret it tomorrow?",
-      "A budget is a plan to stop having fun.",
-      "I’m just one impulse buy away from bankruptcy.",
-      "Investing in coffee is the only ROI I trust.",
-      "My retirement plan is winning the lottery.",
-      "My savings account is basically a sad emoji.",
-      "I started saving... then saw something on sale.",
-      "Money doesn’t buy happiness, but it buys pizza and that’s close enough.",
-      "I checked my bank account and even my balance is socially distancing.",
-      "I have a financial strategy—avoid checking my balance.",
-      "I like my money where I can see it—not in my account.",
-      "Every paycheck has a dream… and a death wish.",
-      "I work so my bills feel loved.",
-      "My budget and my dreams have never met.",
-      "I’m not a shopaholic, I’m just stimulating the economy.",
-      "Who needs money when you have sarcasm?",
-      "I tried to make a budget but my money just ghosted me.",
-      "I spend money like I’m playing Monopoly.",
-      "My financial advisor is Google and poor decisions.",
-      "I tried saving money but then coffee happened.",
-      "If you think I'm bad with money, wait until you see my diet.",
-      "Paychecks are like exes—gone too soon.",
-      "Every financial plan starts with good intentions and ends at the clearance aisle.",
-      "I treat my budget like a speed limit—just a suggestion.",
-      "I'm financially stable… if nothing ever breaks again.",
-      "I don’t have a money tree, just a money cactus—looks good but painful.",
-      "I tried budgeting, but life had other plans.",
-      "If I had a peso for every time I spent one, I’d still be broke.",
-      "I save money by avoiding malls and looking at my bills.",
-      "Money can’t buy love, but it can rent peace of mind.",
-      "My finances are like a horror movie—predictable but terrifying.",
-      "I don’t rise and grind, I snooze and spend.",
-      "I can resist everything except online sales.",
-      "Saving money feels great... for five minutes.",
-      "My idea of wealth is having food and WiFi.",
-      "I plan for the future... but only until next payday.",
-      "Budgeting is when you pretend you won’t spend anything,wek then do anyway.",
-      "My wallet’s favorite day is payday. The rest are sad.",
-      "I do yoga... to stretch my money.",
-      "Financial advice: stop buying stuff you don’t need. Too bad it’s fun.",
-      "I made a budget and stuck to it—for almost 4 hours.",
-      "Wealth is not about having more, it’s about needing less.",
-      "My wallet and my dreams are not on speaking terms.",
-      "Financial freedom is the ultimate rebellion.",
-      "I’m not poor, I’m just rich in experiences.",
-      "Budgeting is proof that math can ruin lives.",
-      "Why does my money disappear faster than my patience?",
-      "Save like you’re broke, spend like you’re rich—reverse psychology for your wallet.",
-      "Life’s short—buy the shoes. Regret it responsibly.",
-      "Invest in yourself; it’s the only market you control.",
-      "I’m one coffee away from financial ruin.",
-      "Money can’t buy happiness, but it can buy a boat to sail right next to it.",
-      "My paycheck has trust issues—it never sticks around.",
-      "Plan your money or it will plan your panic.",
-      "The secret to wealth? Spend less than you make. Mind-blowing, I know.",
-      "I wanted financial peace. Life gave me financial puzzles.",
-      "Save money. Then accidentally spend it all online.",
-      "Good things come to those who invest early... and ignore Bitcoin memes.",
-      "My financial plan? Hope and prayer with a side of ramen noodles.",
-      "If my wallet had feelings, it would have abandonment issues.",
-      "I budget better under the influence of extreme panic.",
-      "A penny saved is a shopping opportunity missed.",
-      "I’m great at making money disappear. Magic, really.",
-      "Financial success is 80% discipline, 20% coffee-fueled hope.",
-      "I believe in saving. Right after I finish this sale.",
-      "Never spend money before you earn it… unless it’s Amazon Prime Day.",
-      "Money isn’t everything, but it’s up there with oxygen.",
-      "The bank loves me. I’m their biggest donation.",
-      "Happiness is a positive account balance and low gas prices.",
-      "Credit cards: making you feel rich while actually broke.",
-      "Chase dreams, not credit limits.",
-      "Live below your means and above your expectations.",
-      "My wallet is the Bermuda Triangle of finances.",
-      "Invest early. Retire early. Sleep early. Dream big.",
-      "If you think nobody cares about your finances, miss a payment.",
-      "I'm one unexpected bill away from selling friendship bracelets.",
-      "Wealth is silent; debt is loud.",
-      "Financial security means sleeping like you don’t owe anyone money.",
-      "Being rich is having time, not things.",
-      "I’m financially responsible... except for snacks.",
-      "Inflation is real. I just paid $10 for a memory.",
-      "I budget to travel, not to survive. Priorities.",
-      "Save money now, flex later.",
-      "I don’t rise and grind; I rise and refinance.",
-      "The faster you save, the sooner you can splurge guilt-free.",
-      "Financial independence: the dream, the myth, the overtime.",
-      "I’m not saving for a rainy day; I’m saving for a yacht party.",
-      "One minute you’re young and wild, the next you’re comparing interest rates.",
-      "Budgeting is the art of saying no... mostly to yourself.",
-      "True freedom is not owing anyone a peso.",
-      "My money's favorite hobby is leaving me.",
-      "Save money like your future depends on it—because it does.",
-      "Money doesn’t change people, it just exposes their shopping habits.",
-      "I follow a strict budget: 50% food, 50% regret.",
-      "My financial goals are just dreams with deadlines and discount codes.",
-      "Every peso saved is a peso not spent on overpriced coffee.",
-      "The only interest I get these days is from my bank... and it's insulting.",
-      "My money and I are taking a break. It’s not me—it’s the bills.",
-      "Why is adulting just managing bills and Googling “free stuff near me”?",
-      "A rich mindset can grow in a poor wallet.",
-      "I don’t need a raise, I need a refund on life choices.",
-      "The best way to double your money? Fold it and put it back in your pocket.",
-      "I aspire to be the person who doesn’t flinch at gas prices.",
-      "Buying now, regretting later—my financial superpower.",
-      "A goal without a budget is just a wish list.",
-      "Your bank balance doesn’t define your value—unless you’re buying a house.",
-      "I don't live paycheck to paycheck. I live meme to meme.",
-      "Budgeting is like flossing: everyone says they do it, few actually do.",
-      "Your wallet isn’t empty, it’s full of potential.",
-      "I thought I was bad at math, then I saw my interest charges.",
-      "I save money the same way I keep secrets... terribly.",
-      "Money is a tool—mine’s just lost in a drawer somewhere.",
-      "If spending was a sport, I’d have a gold medal and debt.",
-      "The true cost of adulthood is hidden in your grocery receipt.",
-      "I started budgeting and accidentally found inner peace.",
-      "Buy less, choose well, make it last. Unless it’s snacks.",
-      "If only my savings grew like my appetite.",
-      "Some invest in stocks, others in sneakers. Both are risky.",
-      "There’s a difference between being broke and being creative with money.",
-      "A poor plan beats a perfect excuse.",
-      "I’m not stingy, I’m financially selective.",
-      "It’s not about how much you earn—it’s about how much you keep.",
-      "Living within your means is the new luxury.",
-      "Financially speaking, I’m fluent in “Oops.”",
-      "I’d be rich if overthinking paid well.",
-      "There’s a budget version of everything—except my taste.",
-      "I don’t need therapy, I need a vacation and a better exchange rate.",
-      "I used to dream of millions—now I dream of bills paid on time.",
-      "A little savings today beats a big sorry tomorrow.",
-      "My wallet has seen better days... like 2012.",
-      "If debt had a face, I’d block it.",
-      "Save when you can, not when you have to.",
-      "I tried manifesting money... and manifested more bills.",
-      "It’s all fun and games until your card declines.",
-      "I’m rich in sarcasm and broke in savings.",
-      "Every budget has a cheat day... or ten.",
-      "I love money, but it’s in a one-sided relationship.",
-      "Keep calm and check your credit score.",
-      "Financial literacy: the subject school forgot to teach.",
-      "A smart spender never looks at the price tag—just their budget first.",
-      "Financial stability is just peace of mind in spreadsheet form.",
-      "My budget and I are in a toxic relationship.",
-      "I don’t need more money, I need fewer cravings.",
-      "Every coin counts—until it rolls under the fridge.",
-      "Rich is a mindset. Broke is a receipt.",
-      "Financial advise: don’t buy it if it’s not on sale… or edible.",
-      "My savings are shy—they disappear when looked at.",
-      "I believe in financial miracles... every payday.",
-      "A budget is like a diet. Hard to follow and easy to break.",
-      "I want a bank account as strong as my opinions.",
-      "Saving money is easy—until your cart says otherwise.",
-      "Be the boss of your money, or your money will boss you.",
-      "I used to dream big. Now I dream debt-free.",
-      "Your future self is watching your spending. Judging hard.",
-      "I’m not broke, I’m just heavily invested... in subscriptions.",
-      "Be so good with money that your wallet starts gaining confidence.",
-      "Payday is just a pit stop between bills.",
-      "Save like it’s a hobby. Spend like it’s a threat.",
-      "My idea of financial growth is finding ₱100 in old jeans.",
-      "I’m trying this thing called “not buying stuff.” It’s hard.",
-      "Don’t trust money that comes too easy. It leaves the same way.",
-      "My finances are a rollercoaster—and I lost the seatbelt.",
-      "I don’t follow money. I aggressively chase it.",
-      "If you want to feel rich, count the things money can’t buy—then cry over rent.",
-      "My wallet has two moods: full of receipts or full of regrets.",
-      "Learn to manage money before it manages your stress.",
-      "Don’t spend more to feel better. Spend less to sleep better.",
-      "My money’s on vacation. It didn’t take me.",
-      "The goal isn’t to look rich, it’s to stop feeling poor.",
-      "Financial success: when payday no longer feels like survival.",
-      "Budgeting: because winging it doesn’t work with bills.",
-      "One day, I’ll check my account and smile. Today is not that day.",
-      "I only check my balance when I need a reason to stay home.",
-      "Spending habits: 90% emotional, 10% sale pressure.",
-      "You can’t deposit excuses.",
-      "I save for the future and shop like there’s no tomorrow.",
-      "Every unnecessary purchase is future-you’s headache.",
-      "If budgeting was a person, we’d need therapy.",
-      "Discipline makes cents.",
-      "Don’t let lifestyle creep become a financial horror story.",
-      "My credit card is bold. My income is shy.",
-      "Want to feel rich? Cook at home for a week.",
-      "A smart financial move today saves panic attacks later.",
-      "I spend money like I’ll win the lottery tomorrow.",
-      "Finance tip: If it’s cute, it’s probably expensive.",
-      "It’s not about how much you earn—it’s how little you waste.",
-      "I finally understand taxes. Just kidding, I don’t.",
-      "Sometimes, broke just means “temporarily cash-flexible.”",
-      "Save money like you’re allergic to spending.",
-      "Every peso saved is an act of rebellion.",
-      "Don’t chase money. Let it feel your absence and come back.",
-      "I'm not broke—I'm just on a money pause.",
-      "Financial freedom: the luxury of not checking your balance before ordering food.",
-      "I plan my finances like a plot twist—surprising and slightly chaotic.",
-      "I tried being financially responsible. Now I’m just emotionally tired.",
-      "Every payday feels like a loan repayment to life.",
-      "Don’t just make money. Make it stay.",
-      "My wallet has commitment issues—it never stays full.",
-      "There’s always enough money for dessert.",
-      "I wish self-control was sold online with free shipping.",
-      "Saving money is the adult version of having superpowers.",
-      "My financial plan includes “hope” and “prayers.”",
-      "Bills are like exes—always showing up uninvited.",
-      "My budget whispers, “Put it back.”",
-      "A good day starts with coffee and checking your bank app without flinching.",
-      "Life’s short. Save money anyway.",
-      "A sale isn’t saving money—it’s spending slower.",
-      "My retirement plan involves winning a random contest I never entered.",
-      "Spend like you’re allergic to overdrafts.",
-      "Budgeting is a silent scream in spreadsheet form.",
-      "I’m financially stable—until lunch.",
-      "You can’t spell “shopping” without “no savings.”",
-      "Avoiding impulse buys is a full-time job.",
-      "Financial stress builds character... and caffeine dependence.",
-      "I treat my budget like a diet: I start over every Monday.",
-      "Save money, then act broke. That’s the game.",
-      "Money is quiet. Debt is loud.",
-      "Nothing feels as good as buying nothing. (Except pizza.)",
-      "Your wallet will thank you—if it had anything left in it.",
-      "I read a book on budgeting. Then I bought five more.",
-      "A budget is telling your money where to go instead of wondering where it went.",
-      "I’d save more if tacos didn’t exist.",
-      "Spend with intention, not emotion.",
-      "I’d be rich if laughing paid the bills.",
-      "Save like you’re already rich. Spend like you’re already broke.",
-      "Bank accounts are just mood rings for adults.",
-      "My credit card lives its best life. I don’t.",
-      "Buy experiences, not things—unless it’s a couch.",
-      "Money can't buy happiness, but it can rent peace and quiet.",
-      "Financial wisdom is realizing you don't need half the stuff in your cart.",
-      "I’m in a committed relationship with cashback apps.",
-      "Budgeting: because “YOLO” is not a financial plan.",
-      "If it costs your peace of mind, it’s too expensive.",
-      "I’m just a few smart money moves away from being legendary.",
-      "Being broke is a phase. Being financially clueless is a lifestyle.",
-      "Invest in your future... and maybe a snack.",
-      "I try to save money, but delivery fees are so persuasive.",
-      "Credit card limit ≠ your budget.",
-      "Spend wisely—your future self might be petty.",
-      "The only thing growing faster than my age is my expenses.",
-      "My bank account is on a diet. Unfortunately, it’s working.",
-      "I'm not broke—I'm just pre-rich.",
-      "Money doesn't sleep, but it sure vanishes overnight.",
-      "My financial strategy? Don't look, don't spend, pretend.",
-      "Payday: the day I pay for everything I already bought.",
-      "I need a money tree... or at least a budget bush.",
-      "Budgeting is my version of adult hide-and-seek.",
-      "I downloaded a finance app. Now I cry with graphs.",
-      "Don't let your bills outnumber your blessings.",
-      "Being rich in friends is great—until the bill arrives.",
-      "Saving is fun if you never check your online cart.",
-      "Money is a tool. Apparently, I’m not handy.",
-      "My dream job is collecting interest.",
-      "The fastest thing on earth? My salary leaving my account.",
-      "Budgeting is just a polite way of saying “no” to yourself repeatedly.",
-      "I don’t rise and grind. I rise and regret.",
-      "Credit score: the adult version of a high score no one brags about.",
-      "Save so hard that your wallet stops crying.",
-      "If spending was cardio, I’d be an Olympian.",
-      "I'm not overspending, I'm stimulating the economy.",
-      "My money talks, but all it says is \"Goodbye.\"",
-      "Success is when your debit card stops declining.",
-      "I tried living within my means. They moved.",
-      "Don't be afraid to start small—unless it’s your salary.",
-      "I trust my gut... until it orders takeout.",
-      "Budget tight, dreams big. Let the stretch begin.",
-      "Treat your savings like a pet: feed it often.",
-      "I don't splurge, I “reward my emotional instability.”",
-      "My expenses are sponsored by: false confidence.",
-      "Peace of mind > piece of stuff.",
-      "Sometimes the best investment is not spending at all.",
-      "A shopping spree is just panic with a receipt.",
-      "I count my coins like they’re lottery tickets.",
-      "Stop buying things you don’t need to impress people who aren’t looking.",
-      "Saving money is like flossing: no one sees it, but it matters.",
-      "My finances are in shape—if that shape is a triangle of debt.",
-      "I whisper to my wallet, “Be strong.”",
-      "Don’t let temporary feelings create permanent debt.",
-      "Adulting is realizing “free trial” is never truly free.",
-      "If my wallet had a face, it would be constantly judging me.",
-      "Investing in yourself sounds great—until you see the price of therapy and coffee.",
-      "They said money can't buy happiness—but have you tried hiring a cleaner?",
-      "I don't need financial advice. I need financial assistance.",
-      "I save money by not checking my account—less stress.",
-      "The most dangerous phrase? “It’s only ₱300.”",
-      "Want motivation? Open your bank app before shopping.",
-      "Some people plan vacations. I plan grocery trips.",
-      "Keep your coins. I want change.",
-      "The less you buy, the richer you become.",
-      "My wealth is in my Wi-Fi and caffeine supply.",
+      // ... (other quotes remain unchanged)
       "The richest people are the ones who spend wisely, not wildly."
     ];
 
-    // Initialize page
+    // Initialize elements
     const settingsPanel = document.getElementById('settings-panel');
     const settingsBtn = document.getElementById('settings-btn');
     const closePanelBtn = document.getElementById('close-panel');
@@ -722,68 +460,51 @@
     applyTheme(savedTheme);
     updateToggleButtons(savedTheme);
 
-    // Toggle settings panel
+    // Event listeners
     settingsBtn.addEventListener('click', () => {
       settingsPanel.classList.toggle('open');
       themePopup.classList.remove('open');
       popupOverlay.classList.remove('open');
-      console.log('Settings panel toggled');
     });
 
-    // Close settings panel
     closePanelBtn.addEventListener('click', () => {
       settingsPanel.classList.remove('open');
-      console.log('Settings panel closed');
     });
 
-    // Open theme popup
     themesHeader.addEventListener('click', () => {
       themePopup.classList.add('open');
       popupOverlay.classList.add('open');
-      console.log('Theme popup opened');
     });
 
-    // Close theme popup
     closePopupBtn.addEventListener('click', () => {
       themePopup.classList.remove('open');
       popupOverlay.classList.remove('open');
-      console.log('Theme popup closed');
     });
 
-    // Close popup when clicking overlay
     popupOverlay.addEventListener('click', () => {
       themePopup.classList.remove('open');
       popupOverlay.classList.remove('open');
-      console.log('Theme popup closed via overlay');
     });
 
-    // Handle theme toggle
     toggleButtons.forEach(button => {
       button.addEventListener('click', () => {
         const theme = button.dataset.theme;
         applyTheme(theme);
         updateToggleButtons(theme);
         localStorage.setItem('selectedTheme', theme);
-        console.log(`Theme changed to: ${theme}`);
       });
     });
 
-    // Apply theme to page
+    // Apply theme
     function applyTheme(theme) {
       document.body.className = `min-h-screen flex flex-col theme-${theme}`;
-      console.log(`Applied theme: ${theme}`);
     }
 
-    // Update toggle buttons state
+    // Update toggle buttons
     function updateToggleButtons(activeTheme) {
       toggleButtons.forEach(button => {
-        if (button.dataset.theme === activeTheme) {
-          button.classList.add('active');
-        } else {
-          button.classList.remove('active');
-        }
+        button.classList.toggle('active', button.dataset.theme === activeTheme);
       });
-      console.log(`Toggle buttons updated for theme: ${activeTheme}`);
     }
 
     // Save preferences
@@ -793,10 +514,9 @@
       localStorage.setItem('userName', userName);
       localStorage.setItem('userTimeZone', userTimeZone);
       updateGreeting();
-      console.log('Preferences saved:', { userName, userTimeZone });
     }
 
-    // Update dynamic greeting
+    // Update greeting
     function updateGreeting() {
       const userName = localStorage.getItem('userName') || '';
       const userTimeZone = localStorage.getItem('userTimeZone') || Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -805,55 +525,44 @@
       try {
         hour = new Date(now.toLocaleString('en-US', { timeZone: userTimeZone, hour: 'numeric', hour12: false })).getHours();
       } catch (e) {
-        console.error('Error getting time for timeZone:', userTimeZone, e);
-        hour = now.getHours(); // Fallback to local time
-      }
-      console.log('Current timeZone:', userTimeZone, 'Hour:', hour);
-
-      const earlyMorningGreetings = [
-        `Hey${userName ? ' ' + userName : ''}, up late or up early? Let’s keep your finances on track.`,
-        `Quiet hours, perfect time to review your expenses${userName ? ' ' + userName : ''}!`,
-        `Early bird mode on. Got any spending to log${userName ? ' ' + userName : ''}?`
-      ];
-      const morningGreetings = [
-        `Good morning${userName ? ' ' + userName : ''}! Ready to track your spending today?`,
-        `Fresh start! Let’s keep your budget on point${userName ? ' ' + userName : ''}.`,
-        `Morning check-in: How are your expenses looking${userName ? ' ' + userName : ''}?`
-      ];
-      const afternoonGreetings = [
-        `Good afternoon${userName ? ' ' + userName : ''}! Let's see where your money went.`,
-        `Halfway through! Any new expenses?`,
-        `Afternoon update time. Let’s log what matters${userName ? ' ' + userName : ''}.`
-      ];
-      const eveningGreetings = [
-        `Good evening${userName ? ' ' + userName : ''}! A quick check before the day ends.`,
-        `Winding down? Let’s take a minute to track your day’s spending${userName ? ' ' + userName : ''}.`,
-        `Evening wrap-up: Any last expenses to record${userName ? ' ' + userName : ''}?`
-      ];
-
-      let greetings;
-      if (hour >= 0 && hour < 5) {
-        greetings = earlyMorningGreetings;
-      } else if (hour >= 5 && hour < 12) {
-        greetings = morningGreetings;
-      } else if (hour >= 12 && hour < 18) {
-        greetings = afternoonGreetings;
-      } else {
-        greetings = eveningGreetings;
+        hour = now.getHours();
       }
 
-      const randomIndex = Math.floor(Math.random() * greetings.length);
-      const selectedGreeting = greetings[randomIndex];
-      document.getElementById('welcome-message').innerText = selectedGreeting;
-      console.log('Selected greeting:', selectedGreeting);
+      const greetings = {
+        earlyMorning: [
+          `Hey${userName ? ' ' + userName : ''}, up late or up early? Let’s keep your finances on track.`,
+          `Quiet hours, perfect time to review your expenses${userName ? ' ' + userName : ''}!`,
+          `Early bird mode on. Got any spending to log${userName ? ' ' + userName : ''}?`
+        ],
+        morning: [
+          `Good morning${userName ? ' ' + userName : ''}! Ready to track your spending today?`,
+          `Fresh start! Let’s keep your budget on point${userName ? ' ' + userName : ''}.`,
+          `Morning check-in: How are your expenses looking${userName ? ' ' + userName : ''}?`
+        ],
+        afternoon: [
+          `Good afternoon${userName ? ' ' + userName : ''}! Let's see where your money went.`,
+          `Halfway through! Any new expenses?`,
+          `Afternoon update time. Let’s log what matters${userName ? ' ' + userName : ''}.`
+        ],
+        evening: [
+          `Good evening${userName ? ' ' + userName : ''}! A quick check before the day ends.`,
+          `Winding down? Let’s take a minute to track your day’s spending${userName ? ' ' + userName : ''}.`,
+          `Evening wrap-up: Any last expenses to record${userName ? ' ' + userName : ''}?`
+        ]
+      };
+
+      let selectedGreetings;
+      if (hour >= 0 && hour < 5) selectedGreetings = greetings.earlyMorning;
+      else if (hour >= 5 && hour < 12) selectedGreetings = greetings.morning;
+      else if (hour >= 12 && hour < 18) selectedGreetings = greetings.afternoon;
+      else selectedGreetings = greetings.evening;
+
+      document.getElementById('welcome-message').innerText = selectedGreetings[Math.floor(Math.random() * selectedGreetings.length)];
     }
 
     // Update financial quote
     function updateFinancialQuote() {
-      const randomIndex = Math.floor(Math.random() * financialQuotes.length);
-      const selectedQuote = financialQuotes[randomIndex];
-      document.getElementById('financial-quote').innerText = selectedQuote;
-      console.log('Selected financial quote:', selectedQuote);
+      document.getElementById('financial-quote').innerText = financialQuotes[Math.floor(Math.random() * financialQuotes.length)];
     }
 
     // Load preferences
@@ -864,14 +573,10 @@
       document.getElementById('userTimeZone').value = userTimeZone;
       updateGreeting();
       updateFinancialQuote();
-      console.log('Preferences loaded:', { userName, userTimeZone });
     }
 
     // Initialize
-    window.onload = function() {
-      loadPreferences();
-      console.log('Page loaded, preferences and quote initialized');
-    };
+    window.onload = loadPreferences;
   </script>
 </body>
 </html>

@@ -45,21 +45,7 @@
         }
 
         /* Apply accent color to buttons */
-        .theme-candy button:not(#back-btn),
-        .theme-bleed button:not(#back-btn),
-        .theme-midnight button:not(#back-btn),
-        .theme-sea button:not(#back-btn),
-        .theme-howl button:not(#back-btn),
-        .theme-dawn button:not(#back-btn),
-        .theme-night button:not(#back-btn),
-        .theme-drank button:not(#back-btn),
-        .theme-eve button:not(#back-btn),
-        .theme-gray button:not(#back-btn),
-        .theme-ocean button:not(#back-btn),
-        .theme-auro button:not(#back-btn),
-        .theme-pm button:not(#back-btn),
-        .theme-ember button:not(#back-btn),
-        .theme-flare button:not(#back-btn) {
+        button:not(#back-btn) {
             background-color: var(--accent);
         }
 
@@ -76,69 +62,167 @@
         .theme-candy label, .theme-eve label {
             color: #000;
         }
+        .theme-bleed input, .theme-midnight input, .theme-sea input,
+        .theme-howl input, .theme-dawn input, .theme-night input,
+        .theme-drank input, .theme-gray input, .theme-ocean input,
+        .theme-auro input, .theme-pm input, .theme-ember input,
+        .theme-flare input {
+            background-color: #2c2f36;
+            color: #fff;
+            border-color: #4b5563;
+        }
+        .theme-bleed input:focus, .theme-midnight input:focus, .theme-sea input:focus,
+        .theme-howl input:focus, .theme-dawn input:focus, .theme-night input:focus,
+        .theme-drank input:focus, .theme-gray input:focus, .theme-ocean input:focus,
+        .theme-auro input:focus, .theme-pm input:focus, .theme-ember input:focus,
+        .theme-flare input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        /* Result and error divs */
+        .theme-candy #result, .theme-eve #result {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .theme-bleed #result, .theme-midnight #result, .theme-sea #result,
+        .theme-howl #result, .theme-dawn #result, .theme-night #result,
+        .theme-drank #result, .theme-gray #result, .theme-ocean #result,
+        .theme-auro #result, .theme-pm #result, .theme-ember #result,
+        .theme-flare #result {
+            background-color: #1e40af;
+            color: #f3f4f6;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center">
-    <main class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 class="text-2xl font-bold text-center mb-6 text-gray-900">Calculate Discount</h2>
+    <main class="p-6 rounded-lg shadow-lg w-full max-w-md" style="background: inherit;">
+        <h2 class="text-2xl font-bold text-center mb-6">Calculate Discount</h2>
         <form id="calcForm" onsubmit="calculateDiscount(event)">
             <div class="mb-4">
-                <label for="amount" class="block text-sm font-semibold text-gray-700">Amount (₱):</label>
-                <input type="number" id="amount" step="0.01" min="0" placeholder="e.g., 1000" required 
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <label for="amount" class="block text-sm font-semibold" aria-label="Amount in Philippine Peso">Amount (₱):</label>
+                <input type="number" id="amount" step="0.01" min="0" max="1000000" placeholder="e.g., 1000" required 
+                       class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--accent)]">
             </div>
-
             <div class="mb-4">
-                <label for="discount" class="block text-sm font-semibold text-gray-700">Discount (%):</label>
+                <label for="discount" class="block text-sm font-semibold" aria-label="Discount Percentage">Discount (%):</label>
                 <input type="number" id="discount" step="0.1" min="0" max="100" placeholder="e.g., 20" required 
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                       class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--accent)]">
             </div>
-
-            <button type="submit" class="w-full text-white p-2 rounded-md hover:bg-opacity-90">Calculate</button>
+            <div class="flex space-x-4">
+                <button type="submit" class="flex-1 text-white p-3 rounded-md hover:bg-opacity-90" aria-label="Calculate discount">Calculate</button>
+                <button type="button" onclick="resetForm()" class="flex-1 bg-gray-600 text-white p-3 rounded-md hover:bg-gray-700" aria-label="Reset form">Reset</button>
+            </div>
         </form>
-        <div id="error" class="mt-4 p-2 bg-red-100 text-red-700 rounded-md hidden"></div>
-        <div id="result" class="mt-4 p-2 bg-blue-100 text-blue-700 rounded-md hidden"></div>
+        <div id="error" class="mt-4 p-2 bg-red-100 text-red-700 rounded-md hidden" role="alert"></div>
+        <div id="result" class="mt-4 p-2 rounded-md hidden" role="status"></div>
     </main>
 
-    <a href="Home.html" id="back-btn" class="fixed bottom-5 right-5 bg-gray-800 text-white py-2 px-3 rounded-xl border border-gray-600 hover:bg-gray-700">Back</a>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+    <a href="Home.html" id="back-btn" class="fixed bottom-5 right-5 text-white py-2 px-3 rounded-xl border hover:bg-opacity-90">Back</a>
 
     <script>
         // Load and apply saved theme
         const savedTheme = localStorage.getItem('selectedTheme') || 'candy';
         document.body.className = `min-h-screen flex items-center justify-center theme-${savedTheme}`;
+        document.getElementById('back-btn').style.backgroundColor = 'var(--accent)';
+        document.getElementById('back-btn').style.borderColor = 'var(--accent)';
+
+        function showToast(message, bgColor) {
+            try {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast ${bgColor}`;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            } catch (e) {
+                console.error('Error showing toast:', e);
+            }
+        }
+
+        function resetForm() {
+            try {
+                document.getElementById('calcForm').reset();
+                document.getElementById('error').classList.add('hidden');
+                document.getElementById('result').classList.add('hidden');
+                document.getElementById('error').textContent = '';
+                document.getElementById('result').textContent = '';
+                document.getElementById('amount').focus();
+                showToast('Form reset successfully!', 'bg-green-500');
+            } catch (e) {
+                console.error('Error resetting form:', e);
+                showToast('Failed to reset form', 'bg-red-500');
+            }
+        }
 
         function calculateDiscount(event) {
-            event.preventDefault();
-            
-            const amount = parseFloat(document.getElementById('amount').value);
-            const discount = parseFloat(document.getElementById('discount').value);
-            const errorDiv = document.getElementById('error');
-            const resultDiv = document.getElementById('result');
+            try {
+                event.preventDefault();
+                const amount = parseFloat(document.getElementById('amount').value);
+                const discount = parseFloat(document.getElementById('discount').value);
+                const errorDiv = document.getElementById('error');
+                const resultDiv = document.getElementById('result');
 
-            // Reset displays
-            errorDiv.classList.add('hidden');
-            resultDiv.classList.add('hidden');
-            errorDiv.textContent = '';
-            resultDiv.textContent = '';
+                // Reset displays
+                errorDiv.classList.add('hidden');
+                resultDiv.classList.add('hidden');
+                errorDiv.textContent = '';
+                resultDiv.textContent = '';
 
-            // Validate inputs
-            if (isNaN(amount) || amount < 0) {
-                errorDiv.textContent = 'Please enter a valid amount.';
-                errorDiv.classList.remove('hidden');
-                return;
+                // Validate inputs
+                if (isNaN(amount) || amount < 0 || amount > 1000000) {
+                    errorDiv.textContent = 'Please enter a valid amount (0 to 1,000,000).';
+                    errorDiv.classList.remove('hidden');
+                    showToast('Invalid amount', 'bg-red-500');
+                    return;
+                }
+                if (isNaN(discount) || discount < 0 || discount > 100) {
+                    errorDiv.textContent = 'Please enter a valid discount percentage (0 to 100).';
+                    errorDiv.classList.remove('hidden');
+                    showToast('Invalid discount percentage', 'bg-red-500');
+                    return;
+                }
+
+                // Calculate discounted price
+                const discountAmount = (amount * discount / 100).toFixed(2);
+                const discountedPrice = (amount * (1 - discount / 100)).toFixed(2);
+
+                // Display result
+                resultDiv.innerHTML = `
+                    Original Price: ₱${amount.toFixed(2)}<br>
+                    Discount Amount: ₱${discountAmount}<br>
+                    Discounted Price: ₱${discountedPrice}
+                `;
+                resultDiv.classList.remove('hidden');
+                showToast('Calculation complete!', 'bg-green-500');
+            } catch (e) {
+                console.error('Error calculating discount:', e);
+                showToast('Failed to calculate discount', 'bg-red-500');
             }
-            if (isNaN(discount) || discount < 0 || discount > 100) {
-                errorDiv.textContent = 'Please enter a valid discount percentage (0–100).';
-                errorDiv.classList.remove('hidden');
-                return;
-            }
-
-            // Calculate discounted price
-            const discountedPrice = amount * (1 - discount / 100);
-
-            // Display result
-            resultDiv.textContent = `Discounted Price: ₱${discountedPrice.toFixed(2)}`;
-            resultDiv.classList.remove('hidden');
         }
     </script>
 </body>

@@ -4,129 +4,93 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Summary</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Theme-specific styles from Home.html */
-    .theme-candy { background-color: #ff80bf; color: #fff; --accent: #ff3399; }
-    .theme-bleed { background-color: #e20074; color: #fff; --accent: #ff66b2; }
-    .theme-midnight { background-color: #002b36; color: #839496; --accent: #b58900; }
-    .theme-sea { background-color: #1c2526; color: #c3e6cb; --accent: #4db6ac; }
-    .theme-howl { background-color: #011627; color: #d6deeb; --accent: #82aaff; }
-    .theme-dawn { background-color: #2d2e2c; color: #fff; --accent: #ff7043; }
-    .theme-night { background-color: #1e222a; color: #abb2bf; --accent: #98c379; }
-    .theme-drank { background-color: #0f111a; color: #acb4c2; --accent: #5c6370; }
-    .theme-eve { background-color: #f4eefd; color: #4b294b; --accent: #d08770; }
-    .theme-gray { background-color: #3c3c3c; color: #cccccc; --accent: #87afaf; }
-    .theme-ocean { background-color: #2b303b; color: #c0c5ce; --accent: #8fa1b3; }
-    .theme-auro { background-color: #1b1e2b; color: #e6e6e6; --accent: #ff6f61; }
-    .theme-pm { background-color: #2c1d4b; color: #d7d7ff; --accent: #957fb8; }
-    .theme-ember { background-color: #1b1818; color: #d4b7a3; --accent: #ff6b6b; }
-    .theme-flare { background-color: #451804; color: #f4e6a2; --accent: #ff4500; }
+    /* Theme-specific styles */
+    .theme-candy { background-color: #ff80bf; color: #1f2937; --accent: #ff3399; }
+    .theme-bleed { background-color: #e20074; color: #f3f4f6; --accent: #ff66b2; }
+    .theme-midnight { background-color: #002b36; color: #f3f4f6; --accent: #b58900; }
+    .theme-sea { background-color: #1c2526; color: #f3f4f6; --accent: #4db6ac; }
+    .theme-howl { background-color: #011627; color: #f3f4f6; --accent: #82aaff; }
+    .theme-dawn { background-color: #2d2e2c; color: #f3f4f6; --accent: #ff7043; }
+    .theme-night { background-color: #1e222a; color: #f3f4f6; --accent: #98c379; }
+    .theme-drank { background-color: #0f111a; color: #f3f4f6; --accent: #5c6370; }
+    .theme-eve { background-color: #f4eefd; color: #1f2937; --accent: #d08770; }
+    .theme-gray { background-color: #3c3c3c; color: #f3f4f6; --accent: #87afaf; }
+    .theme-ocean { background-color: #2b303b; color: #f3f4f6; --accent: #8fa1b3; }
+    .theme-auro { background-color: #1b1e2b; color: #f3f4f6; --accent: #ff6f61; }
+    .theme-pm { background-color: #2c1d4b; color: #f3f4f6; --accent: #957fb8; }
+    .theme-ember { background-color: #1b1818; color: #f3f4f6; --accent: #ff6b6b; }
+    .theme-flare { background-color: #451804; color: #f3f4f6; --accent: #ff4500; }
 
-    /* Text color adjustments for readability */
-    .theme-candy main, .theme-candy header, .theme-candy a,
-    .theme-eve main, .theme-eve header, .theme-eve a {
-      color: #000;
-    }
-    .theme-bleed main, .theme-bleed header, .theme-bleed a,
-    .theme-midnight main, .theme-midnight header, .theme-midnight a,
-    .theme-sea main, .theme-sea header, .theme-sea a,
-    .theme-howl main, .theme-howl header, .theme-howl a,
-    .theme-dawn main, .theme-dawn header, .theme-dawn a,
-    .theme-night main, .theme-night header, .theme-night a,
-    .theme-drank main, .theme-drank header, .theme-drank a,
-    .theme-gray main, .theme-gray header, .theme-gray a,
-    .theme-ocean main, .theme-ocean header, .theme-ocean a,
-    .theme-auro main, .theme-auro header, .theme-auro a,
-    .theme-pm main, .theme-pm header, .theme-pm a,
-    .theme-ember main, .theme-ember header, .theme-ember a,
-    .theme-flare main, .theme-flare header, .theme-flare a {
-      color: #fff;
-    }
-
-    /* Apply accent color to back button */
-    .back-btn {
-      background-color: var(--accent);
-      color: #fff;
-      border: none;
-    }
-    .back-btn:hover {
-      background-color: #343a40;
-    }
-
-    /* Ensure table and dropdowns are readable */
-    .theme-candy .table, .theme-eve .table,
-    .theme-candy .month-display, .theme-eve .month-display,
-    .theme-candy .year-display, .theme-eve .year-display,
-    .theme-candy .month-dropdown, .theme-eve .month-dropdown,
-    .theme-candy .year-dropdown, .theme-eve .year-dropdown {
-      background-color: #fff/color: #000;
-      border-color: #4b5563;
-    }
-    .theme-candy .month-dropdown-item, .theme-eve .month-dropdown-item,
-    .theme-candy .year-dropdown-item, .theme-eve .year-dropdown-item {
-      color: #000;
-    }
-    .theme-candy .month-dropdown-item:hover, .theme-eve .month-dropdown-item:hover,
-    .theme-candy .year-dropdown-item:hover, .theme-eve .year-dropdown-item:hover {
-      background-color: #e5e7eb;
-    }
-    .theme-candy h1, .theme-candy h4, .theme-eve h1, .theme-eve h4 {
-      color: #000;
-    }
-
-    /* Compact styles */
+    /* Custom styles */
     body {
-      padding: 10px; /* Reduced from 20px */
-      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+      padding: 1rem;
+      font-size: 0.875rem;
     }
     h1 {
-      font-size: 1.5rem; /* Reduced from default ~2rem */
-      text-align: center; /* Center the header */
-      margin-bottom: 1rem; /* Reduced spacing */
-      color: inherit;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
     }
     h4 {
-      font-size: 1rem; /* Reduced from default ~1.25rem */
-      color: inherit;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
     }
     .summary-section {
-      margin-bottom: 15px; /* Reduced from 30px */
+      margin-bottom: 1.5rem;
     }
     .table {
-      background-color: #2c2f36;
-      border: 1px solid #444;
-      border-radius: 6px; /* Slightly smaller */
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      font-size: 0.875rem;
       overflow: hidden;
-      font-size: 0.85rem; /* Smaller text */
+    }
+    .theme-candy .table, .theme-eve .table {
+      background-color: #fff;
+      color: #1f2937;
     }
     .table th, .table td {
-      border: 1px solid #444;
-      padding: 4px; /* Reduced from 8px */
+      padding: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
       vertical-align: middle;
     }
+    .table th {
+      background-color: var(--accent);
+      color: #fff;
+    }
+    .theme-candy .table th, .theme-eve .table th {
+      color: #1f2937;
+    }
     .date-selector-grid {
-      position: absolute;
-      top: 5px; /* Closer to top */
-      right: 30px; /* Slightly adjusted */
+      position: fixed;
+      top: 0.5rem;
+      right: 0.5rem;
       display: flex;
-      gap: 5px; /* Reduced from 10px */
+      gap: 0.5rem;
     }
     .month-selector, .year-selector {
       position: relative;
     }
     .month-display, .year-display {
-      font-size: 0.8rem; /* Reduced from 14px */
-      padding: 4px 8px; /* Reduced from 8px 12px */
-      background-color: #2c2f36;
-      border: 1px solid #444;
-      border-radius: 6px; /* Slightly smaller */
-      min-width: 80px; /* Reduced from 100px */
+      font-size: 0.875rem;
+      padding: 0.375rem 0.75rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      min-width: 100px;
       text-align: center;
       cursor: pointer;
+      color: inherit;
     }
-    .month-display-text, .year-display-text {
-      display: inline-block;
+    .theme-candy .month-display, .theme-eve .month-display,
+    .theme-candy .year-display, .theme-eve .year-display {
+      background-color: #fff;
+      color: #1f2937;
     }
     .month-dropdown, .year-dropdown {
       position: absolute;
@@ -134,125 +98,189 @@
       left: 0;
       z-index: 1000;
       display: none;
-      background-color: #2c2f36;
-      border: 1px solid #444;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 6px;
-      min-width: 80px;
-      max-height: 150px; /* Reduced from 200px */
+      min-width: 100px;
+      max-height: 200px;
       overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #444 #2c2f36;
-      font-size: 0.8rem; /* Smaller text */
+      font-size: 0.875rem;
+    }
+    .theme-candy .month-dropdown, .theme-eve .month-dropdown,
+    .theme-candy .year-dropdown, .theme-eve .year-dropdown {
+      background-color: #fff;
+      color: #1f2937;
     }
     .month-dropdown.show, .year-dropdown.show {
       display: block;
     }
     .month-dropdown-item, .year-dropdown-item {
-      padding: 4px 8px; /* Reduced from 8px 12px */
-      color: #f8f9fa;
+      padding: 0.375rem 0.75rem;
+      color: inherit;
       text-decoration: none;
       display: block;
       cursor: pointer;
     }
     .month-dropdown-item:hover, .year-dropdown-item:hover {
-      background-color: #343a40;
+      background-color: var(--accent);
+      color: #fff;
+    }
+    .theme-candy .month-dropdown-item:hover, .theme-eve .month-dropdown-item:hover,
+    .theme-candy .year-dropdown-item:hover, .theme-eve .year-dropdown-item:hover {
+      color: #1f2937;
     }
     .back-btn {
       position: fixed;
-      bottom: 10px; /* Closer to bottom */
-      right: 10px; /* Closer to right */
-      padding: 6px 10px; /* Reduced from 8px 12px */
-      border-radius: 10px; /* Slightly smaller */
+      bottom: 1rem;
+      right: 1rem;
+      background-color: var(--accent);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
       text-decoration: none;
-      font-size: 0.85rem; /* Smaller text */
+      font-size: 0.875rem;
+      transition: filter 0.2s;
+    }
+    .theme-candy .back-btn, .theme-eve .back-btn {
+      color: #1f2937;
+    }
+    .back-btn:hover {
+      filter: brightness(1.1);
+    }
+    .no-data {
+      text-align: center;
+      padding: 1rem;
+      color: inherit;
+    }
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #dc3545;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      body {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+      }
+      h1 {
+        font-size: 1.25rem;
+      }
+      h4 {
+        font-size: 0.875rem;
+      }
+      .table {
+        font-size: 0.75rem;
+      }
+      .table th, .table td {
+        padding: 0.375rem;
+      }
+      .month-display, .year-display {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        min-width: 80px;
+      }
+      .month-dropdown, .year-dropdown {
+        min-width: 80px;
+        font-size: 0.75rem;
+      }
+      .month-dropdown-item, .year-dropdown-item {
+        padding: 0.25rem 0.5rem;
+      }
+      .date-selector-grid {
+        top: 0.25rem;
+        right: 0.25rem;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container mx-auto">
     <h1>Budget Summary</h1>
 
     <!-- Month and Year Selector -->
     <div class="date-selector-grid">
-      <div class="month-selector">
-        <span class="month-display" onclick="toggleMonthDropdown()"><span class="month-display-text" id="month-display">March</span></span>
+      <div class="month-selector" role="listbox" aria-label="Select month">
+        <span class="month-display" onclick="toggleMonthDropdown()" aria-expanded="false" aria-controls="month-dropdown"><span class="month-display-text" id="month-display">March</span></span>
         <div class="month-dropdown" id="month-dropdown">
-          <a class="month-dropdown-item" onclick="selectMonth('jan')">January</a>
-          <a class="month-dropdown-item" onclick="selectMonth('feb')">February</a>
-          <a class="month-dropdown-item" onclick="selectMonth('mar')">March</a>
-          <a class="month-dropdown-item" onclick="selectMonth('apr')">April</a>
-          <a class="month-dropdown-item" onclick="selectMonth('may')">May</a>
-          <a class="month-dropdown-item" onclick="selectMonth('jun')">June</a>
-          <a class="month-dropdown-item" onclick="selectMonth('jul')">July</a>
-          <a class="month-dropdown-item" onclick="selectMonth('aug')">August</a>
-          <a class="month-dropdown-item" onclick="selectMonth('sep')">September</a>
-          <a class="month-dropdown-item" onclick="selectMonth('oct')">October</a>
+          <div class="month-dropdown-item" onclick="selectMonth('jan')" role="option">January</div>
+          <div class="month-dropdown-item" onclick="selectMonth('feb')" role="option">February</div>
+          <div class="month-dropdown-item" onclick="selectMonth('mar')" role="option">March</div>
+          <div class="month-dropdown-item" onclick="selectMonth('apr')" role="option">April</div>
+          <div class="month-dropdown-item" onclick="selectMonth('may')" role="option">May</div>
+          <div class="month-dropdown-item" onclick="selectMonth('jun')" role="option">June</div>
+          <div class="month-dropdown-item" onclick="selectMonth('jul')" role="option">July</div>
+          <div class="month-dropdown-item" onclick="selectMonth('aug')" role="option">August</div>
+          <div class="month-dropdown-item" onclick="selectMonth('sep')" role="option">September</div>
+          <div class="month-dropdown-item" onclick="selectMonth('oct')" role="option">October</div>
+          <div class="month-dropdown-item" onclick="selectMonth('nov')" role="option">November</div>
+          <div class="month-dropdown-item" onclick="selectMonth('dec')" role="option">December</div>
         </div>
       </div>
-      <div class="year-selector">
-        <span class="year-display" onclick="toggleYearDropdown()"><span class="year-display-text" id="year-display">2025</span></span>
-        <div class="year-dropdown" id="year-dropdown">
-          <a class="year-dropdown-item" onclick="selectYear(2025)">2025</a>
-          <a class="year-dropdown-item" onclick="selectYear(2026)">2026</a>
-          <a class="year-dropdown-item" onclick="selectYear(2027)">2027</a>
-          <a class="year-dropdown-item" onclick="selectYear(2028)">2028</a>
-          <a class="year-dropdown-item" onclick="selectYear(2029)">2029</a>
-          <a class="year-dropdown-item" onclick="selectYear(2030)">2030</a>
-          <a class="year-dropdown-item" onclick="selectYear(2031)">2031</a>
-          <a class="year-dropdown-item" onclick="selectYear(2032)">2032</a>
-          <a class="year-dropdown-item" onclick="selectYear(2033)">2033</a>
-          <a class="year-dropdown-item" onclick="selectYear(2034)">2034</a>
-        </div>
+      <div class="year-selector" role="listbox" aria-label="Select year">
+        <span class="year-display" onclick="toggleYearDropdown()" aria-expanded="false" aria-controls="year-dropdown"><span class="year-display-text" id="year-display">2025</span></span>
+        <div class="year-dropdown" id="year-dropdown"></div>
       </div>
     </div>
 
     <!-- Daily Summary -->
     <div class="summary-section">
       <h4>Daily Summary for <span id="daily-title">March 2025</span></h4>
-      <table class="table">
+      <table class="table" role="grid" aria-label="Daily budget summary">
         <thead>
           <tr>
-            <th>Day</th>
-            <th>Income (₱)</th>
-            <th>Expenses (₱)</th>
-            <th>Balance (₱)</th>
+            <th scope="col">Day</th>
+            <th scope="col">Income (₱)</th>
+            <th scope="col">Expenses (₱)</th>
+            <th scope="col">Balance (₱)</th>
           </tr>
         </thead>
-        <tbody id="daily-summary-table">
-          <!-- Dynamic rows will be added here -->
-        </tbody>
+        <tbody id="daily-summary-table"></tbody>
       </table>
     </div>
 
     <!-- Monthly Summary -->
     <div class="summary-section">
       <h4>Monthly Summary for <span id="monthly-title">2025</span></h4>
-      <table class="table">
+      <table class="table" role="grid" aria-label="Monthly budget summary">
         <thead>
           <tr>
-            <th>Month</th>
-            <th>Income (₱)</th>
-            <th>Expenses (₱)</th>
-            <th>Balance (₱)</th>
+            <th scope="col">Month</th>
+            <th scope="col">Income (₱)</th>
+            <th scope="col">Expenses (₱)</th>
+            <th scope="col">Balance (₱)</th>
           </tr>
         </thead>
-        <tbody id="monthly-summary-table">
-          <!-- Dynamic rows will be added here -->
-        </tbody>
+        <tbody id="monthly-summary-table"></tbody>
       </table>
     </div>
   </div>
 
   <!-- Back Button -->
-  <a href="Month.html" class="back-btn">Back</a>
+  <a href="Home.html" class="back-btn">Back</a>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
 
   <script>
-    // Load and apply saved theme
-    const savedTheme = localStorage.getItem('selectedTheme') || 'candy';
-    document.body.className = `theme-${savedTheme}`;
-
     let currentMonth = 'mar';
-    let currentYear = 2025;
+    let currentYear = new Date().getFullYear();
 
     const monthNames = {
       jan: 'January', feb: 'February', mar: 'March', apr: 'April', may: 'May', jun: 'June',
@@ -260,144 +288,297 @@
     };
 
     const monthOrder = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-    const yearOrder = Array.from({length: 26}, (_, i) => 2025 + i);
+
+    function applyTheme() {
+      try {
+        const savedTheme = localStorage.getItem('selectedTheme') || 'candy';
+        document.body.className = `theme-${savedTheme}`;
+      } catch (e) {
+        console.error('Error applying theme:', e);
+      }
+    }
+
+    function generateYearOptions() {
+      try {
+        const yearDropdown = document.getElementById('year-dropdown');
+        const currentYear = new Date().getFullYear();
+        const years = Array.from({length: 21}, (_, i) => currentYear - 10 + i);
+        yearDropdown.innerHTML = years.map(year => `
+          <div class="year-dropdown-item" onclick="selectYear(${year})" role="option">${year}</div>
+        `).join('');
+      } catch (e) {
+        console.error('Error generating year options:', e);
+      }
+    }
 
     function getDaysInMonth(month, year) {
-      const monthIndex = monthOrder.indexOf(month);
-      if (monthIndex === 1) {
-        const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-        return isLeapYear ? 29 : 28;
+      try {
+        const monthIndex = monthOrder.indexOf(month);
+        if (monthIndex === 1) {
+          const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+          return isLeapYear ? 29 : 28;
+        }
+        if ([3, 5, 8, 10].includes(monthIndex)) {
+          return 30;
+        }
+        return 31;
+      } catch (e) {
+        console.error('Error calculating days in month:', e);
+        return 31;
       }
-      if ([3, 5, 8, 10].includes(monthIndex)) {
-        return 30;
-      }
-      return 31;
     }
 
     function toggleMonthDropdown() {
-      const monthDropdown = document.getElementById('month-dropdown');
-      const yearDropdown = document.getElementById('year-dropdown');
-      monthDropdown.classList.toggle('show');
-      yearDropdown.classList.remove('show');
+      try {
+        const monthDropdown = document.getElementById('month-dropdown');
+        const yearDropdown = document.getElementById('year-dropdown');
+        const monthDisplay = document.querySelector('.month-display');
+        const isOpen = monthDropdown.classList.toggle('show');
+        yearDropdown.classList.remove('show');
+        monthDisplay.setAttribute('aria-expanded', isOpen);
+      } catch (e) {
+        console.error('Error toggling month dropdown:', e);
+      }
     }
 
     function toggleYearDropdown() {
-      const monthDropdown = document.getElementById('month-dropdown');
-      const yearDropdown = document.getElementById('year-dropdown');
-      yearDropdown.classList.toggle('show');
-      monthDropdown.classList.remove('show');
+      try {
+        const monthDropdown = document.getElementById('month-dropdown');
+        const yearDropdown = document.getElementById('year-dropdown');
+        const yearDisplay = document.querySelector('.year-display');
+        const isOpen = yearDropdown.classList.toggle('show');
+        monthDropdown.classList.remove('show');
+        yearDisplay.setAttribute('aria-expanded', isOpen);
+      } catch (e) {
+        console.error('Error toggling year dropdown:', e);
+      }
     }
 
     function selectMonth(month) {
-      currentMonth = month;
-      updateSummaries();
-      document.getElementById('month-dropdown').classList.remove('show');
+      try {
+        currentMonth = month;
+        updateSummaries();
+        document.getElementById('month-dropdown').classList.remove('show');
+        document.querySelector('.month-display').setAttribute('aria-expanded', false);
+      } catch (e) {
+        console.error('Error selecting month:', e);
+      }
     }
 
     function selectYear(year) {
-      currentYear = year;
-      updateSummaries();
-      document.getElementById('year-dropdown').classList.remove('show');
+      try {
+        currentYear = year;
+        updateSummaries();
+        document.getElementById('year-dropdown').classList.remove('show');
+        document.querySelector('.year-display').setAttribute('aria-expanded', false);
+      } catch (e) {
+        console.error('Error selecting year:', e);
+      }
+    }
+
+    // Debounce utility
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
     }
 
     function updateSummaries() {
-      document.getElementById('daily-title').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-      document.getElementById('monthly-title').textContent = currentYear;
-      document.getElementById('month-display').textContent = monthNames[currentMonth];
-      document.getElementById('year-display').textContent = currentYear;
+      try {
+        document.getElementById('daily-title').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+        document.getElementById('monthly-title').textContent = currentYear;
+        document.getElementById('month-display').textContent = monthNames[currentMonth];
+        document.getElementById('year-display').textContent = currentYear;
 
-      // Daily Summary
-      const dailyTable = document.getElementById('daily-summary-table');
-      dailyTable.innerHTML = '';
-      const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-      for (let day = 1; day <= daysInMonth; day++) {
-        const data = JSON.parse(localStorage.getItem(`budget_${currentYear}_${currentMonth}_${day}`)) || {};
-        const incomeList = data.incomeList || [];
-        const expenseList = data.expenseList || [];
-        const totalIncome = incomeList.reduce((sum, amount) => sum + amount, 0);
-        const totalExpense = expenseList.reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0);
-        const balance = totalIncome - totalExpense;
-        if (totalIncome > 0 || totalExpense > 0) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${day}</td>
-            <td>${totalIncome.toFixed(2)}</td>
-            <td>${totalExpense.toFixed(2)}</td>
-            <td>${balance.toFixed(2)}</td>
-          `;
-          dailyTable.appendChild(row);
+        // Daily Summary
+        const dailyTable = document.getElementById('daily-summary-table');
+        dailyTable.innerHTML = '';
+        const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+        let hasDailyData = false;
+        for (let day = 1; day <= daysInMonth; day++) {
+          let data;
+          try {
+            data = JSON.parse(localStorage.getItem(`budget_${currentYear}_${currentMonth}_${day}`)) || {};
+          } catch (e) {
+            console.error(`Error parsing budget_${currentYear}_${currentMonth}_${day}:`, e);
+            continue;
+          }
+          const incomeList = Array.isArray(data.incomeList) ? data.incomeList : [];
+          const expenseList = Array.isArray(data.expenseList) ? data.expenseList : [];
+          const totalIncome = incomeList.reduce((sum, amount) => sum + (isFinite(amount) ? Number(amount) : 0), 0);
+          const totalExpense = expenseList.reduce((sum, expense) => {
+            const amount = parseFloat(expense?.amount);
+            return sum + (isFinite(amount) ? amount : 0);
+          }, 0);
+          const balance = totalIncome - totalExpense;
+          if (totalIncome > 0 || totalExpense > 0) {
+            hasDailyData = true;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${day}</td>
+              <td>${totalIncome.toFixed(2)}</td>
+              <td>${totalExpense.toFixed(2)}</td>
+              <td>${balance.toFixed(2)}</td>
+            `;
+            dailyTable.appendChild(row);
+          }
         }
+        if (!hasDailyData) {
+          dailyTable.innerHTML = '<tr><td colspan="4" class="no-data">No data for this month</td></tr>';
+        }
+
+        // Monthly Summary
+        const monthlyTable = document.getElementById('monthly-summary-table');
+        monthlyTable.innerHTML = '';
+        let hasMonthlyData = false;
+        monthOrder.forEach(month => {
+          let totalIncome = 0;
+          let totalExpense = 0;
+          const days = getDaysInMonth(month, currentYear);
+          for (let day = 1; day <= days; day++) {
+            let data;
+            try {
+              data = JSON.parse(localStorage.getItem(`budget_${currentYear}_${month}_${day}`)) || {};
+            } catch (e) {
+              console.error(`Error parsing budget_${currentYear}_${month}_${day}:`, e);
+              continue;
+            }
+            const incomeList = Array.isArray(data.incomeList) ? data.incomeList : [];
+            const expenseList = Array.isArray(data.expenseList) ? data.expenseList : [];
+            totalIncome += incomeList.reduce((sum, amount) => sum + (isFinite(amount) ? Number(amount) : 0), 0);
+            totalExpense += expenseList.reduce((sum, expense) => {
+              const amount = parseFloat(expense?.amount);
+              return sum + (isFinite(amount) ? amount : 0);
+            }, 0);
+          }
+          const balance = totalIncome - totalExpense;
+          if (totalIncome > 0 || totalExpense > 0) {
+            hasMonthlyData = true;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${monthNames[month]}</td>
+              <td>${totalIncome.toFixed(2)}</td>
+              <td>${totalExpense.toFixed(2)}</td>
+              <td>${balance.toFixed(2)}</td>
+            `;
+            monthlyTable.appendChild(row);
+          }
+        });
+        if (!hasMonthlyData) {
+          monthlyTable.innerHTML = '<tr><td colspan="4" class="no-data">No data for this year</td></tr>';
+        }
+      } catch (e) {
+        console.error('Error updating summaries:', e);
+        showToast('Failed to load summaries', 'bg-red-500');
       }
+    }
 
-      // Monthly Summary
-      const monthlyTable = document.getElementById('monthly-summary-table');
-      monthlyTable.innerHTML = '';
-      monthOrder.forEach(month => {
-        let totalIncome = 0;
-        let totalExpense = 0;
-        const days = getDaysInMonth(month, currentYear);
-        for (let day = 1; day <= days; day++) {
-          const data = JSON.parse(localStorage.getItem(`budget_${currentYear}_${month}_${day}`)) || {};
-          const incomeList = data.incomeList || [];
-          const expenseList = data.expenseList || [];
-          totalIncome += incomeList.reduce((sum, amount) => sum + amount, 0);
-          totalExpense += expenseList.reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0);
-        }
-        const balance = totalIncome - totalExpense;
-        if (totalIncome > 0 || totalExpense > 0) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${monthNames[month]}</td>
-            <td>${totalIncome.toFixed(2)}</td>
-            <td>${totalExpense.toFixed(2)}</td>
-            <td>${balance.toFixed(2)}</td>
-          `;
-          monthlyTable.appendChild(row);
-        }
-      });
+    const debouncedUpdateSummaries = debounce(updateSummaries, 300);
+
+    function showToast(message, bgColor) {
+      try {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${bgColor}`;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      } catch (e) {
+        console.error('Error showing toast:', e);
+      }
     }
 
     function makeDropdownDraggable(dropdownId) {
-      const dropdown = document.getElementById(dropdownId);
-      let isDragging = false;
-      let startY, startScrollTop;
+      try {
+        const dropdown = document.getElementById(dropdownId);
+        let isDragging = false;
+        let startY, startScrollTop;
 
-      dropdown.addEventListener('mousedown', (e) => {
-        if (e.target.classList.contains(dropdownId + '-item')) return;
-        isDragging = true;
-        startY = e.clientY;
-        startScrollTop = dropdown.scrollTop;
-        e.preventDefault();
-      });
+        dropdown.addEventListener('mousedown', (e) => {
+          if (e.target.classList.contains(dropdownId + '-item')) return;
+          isDragging = true;
+          startY = e.clientY;
+          startScrollTop = dropdown.scrollTop;
+          e.preventDefault();
+        });
 
-      document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-          const deltaY = startY - e.clientY;
-          dropdown.scrollTop = startScrollTop + deltaY;
-        }
-      });
+        document.addEventListener('mousemove', (e) => {
+          if (isDragging) {
+            const deltaY = startY - e.clientY;
+            dropdown.scrollTop = startScrollTop + deltaY;
+          }
+        });
 
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
+        document.addEventListener('mouseup', () => {
+          isDragging = false;
+        });
+
+        dropdown.addEventListener('touchstart', (e) => {
+          if (e.target.classList.contains(dropdownId + '-item')) return;
+          isDragging = true;
+          startY = e.touches[0].clientY;
+          startScrollTop = dropdown.scrollTop;
+          e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+          if (isDragging) {
+            const deltaY = startY - e.touches[0].clientY;
+            dropdown.scrollTop = startScrollTop + deltaY;
+          }
+        });
+
+        document.addEventListener('touchend', () => {
+          isDragging = false;
+        });
+      } catch (e) {
+        console.error(`Error making ${dropdownId} draggable:`, e);
+      }
     }
 
     window.onload = function() {
-      updateSummaries();
-      makeDropdownDraggable('month-dropdown');
-      makeDropdownDraggable('year-dropdown');
+      try {
+        applyTheme();
+        generateYearOptions();
+        updateSummaries();
+        makeDropdownDraggable('month-dropdown');
+        makeDropdownDraggable('year-dropdown');
+
+        // Listen for storage changes
+        window.addEventListener('storage', (e) => {
+          if (e.key && e.key.startsWith('budget_')) {
+            debouncedUpdateSummaries();
+          }
+        });
+      } catch (e) {
+        console.error('Error in window.onload:', e);
+        showToast('Failed to initialize app', 'bg-red-500');
+      }
     };
 
     document.addEventListener('click', function(event) {
-      const monthDisplay = document.querySelector('.month-display');
-      const yearDisplay = document.querySelector('.year-display');
-      const monthDropdown = document.getElementById('month-dropdown');
-      const yearDropdown = document.getElementById('year-dropdown');
-      if (!monthDisplay.contains(event.target) && !monthDropdown.contains(event.target)) {
-        monthDropdown.classList.remove('show');
-      }
-      if (!yearDisplay.contains(event.target) && !yearDropdown.contains(event.target)) {
-        yearDropdown.classList.remove('show');
+      try {
+        const monthDisplay = document.querySelector('.month-display');
+        const yearDisplay = document.querySelector('.year-display');
+        const monthDropdown = document.getElementById('month-dropdown');
+        const yearDropdown = document.getElementById('year-dropdown');
+        if (!monthDisplay.contains(event.target) && !monthDropdown.contains(event.target)) {
+          monthDropdown.classList.remove('show');
+          monthDisplay.setAttribute('aria-expanded', false);
+        }
+        if (!yearDisplay.contains(event.target) && !yearDropdown.contains(event.target)) {
+          yearDropdown.classList.remove('show');
+          yearDisplay.setAttribute('aria-expanded', false);
+        }
+      } catch (e) {
+        console.error('Error handling click outside:', e);
       }
     });
   </script>

@@ -2,192 +2,163 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Manage Categories</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Theme-specific styles */
+    .theme-candy { background-color: #ff80bf; color: #1f2937; --accent: #ff3399; }
+    .theme-bleed { background-color: #e20074; color: #f3f4f6; --accent: #ff66b2; }
+    .theme-midnight { background-color: #002b36; color: #f3f4f6; --accent: #b58900; }
+    .theme-sea { background-color: #1c2526; color: #f3f4f6; --accent: #4db6ac; }
+    .theme-howl { background-color: #011627; color: #f3f4f6; --accent: #82aaff; }
+    .theme-dawn { background-color: #2d2e2c; color: #f3f4f6; --accent: #ff7043; }
+    .theme-night { background-color: #1e222a; color: #f3f4f6; --accent: #98c379; }
+    .theme-drank { background-color: #0f111a; color: #f3f4f6; --accent: #5c6370; }
+    .theme-eve { background-color: #f4eefd; color: #1f2937; --accent: #d08770; }
+    .theme-gray { background-color: #3c3c3c; color: #f3f4f6; --accent: #87afaf; }
+    .theme-ocean { background-color: #2b303b; color: #f3f4f6; --accent: #8fa1b3; }
+    .theme-auro { background-color: #1b1e2b; color: #f3f4f6; --accent: #ff6f61; }
+    .theme-pm { background-color: #2c1d4b; color: #f3f4f6; --accent: #957fb8; }
+    .theme-ember { background-color: #1b1818; color: #f3f4f6; --accent: #ff6b6b; }
+    .theme-flare { background-color: #451804; color: #f3f4f6; --accent: #ff4500; }
+
+    /* Custom styles */
     body {
-      background-color: #22252a;
-      color: #f8f9fa;
-      padding: 20px;
+      min-height: 100vh;
+      padding: 1rem;
+      font-size: 0.875rem;
     }
     h1 {
-      color: #f8f9fa;
-      margin-bottom: 20px;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    h4 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
     }
     .category-section {
-      margin-bottom: 30px;
+      margin-bottom: 1.5rem;
     }
     .category-list {
-      background-color: #2c2f36;
-      border: 1px solid #444;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
     }
     .subcategory-list {
-      margin-left: 20px;
-      margin-top: 10px;
+      margin-left: 1rem;
+      margin-top: 0.5rem;
+    }
+    .form-control {
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: inherit;
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      width: 100%;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      background-color: rgba(0, 0, 0, 0.4);
     }
     .btn-primary {
-      background-color: #0d6efd;
-      border-color: #0d6efd;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      height: 2.25rem;
+      transition: filter 0.2s;
+    }
+    .theme-candy .btn-primary, .theme-eve .btn-primary {
+      color: #1f2937;
     }
     .btn-primary:hover {
-      background-color: #0b5ed7;
+      filter: brightness(1.1);
     }
     .btn-danger {
       background-color: #dc3545;
-      border-color: #dc3545;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      transition: filter 0.2s;
     }
     .btn-danger:hover {
-      background-color: #c82333;
-    }
-    .btn-sm {
-      padding: 0.25rem 0.5rem; /* Match .btn-primary padding */
-      font-size: 0.625rem; /* Reduced proportionally for width */
-      width: 48px; /* Same width as .btn-primary */
-    }
-    .form-control {
-      background-color: #343a40;
-      border: 1px solid #444;
-      color: #f8f9fa;
-      margin-bottom: 10px;
-    }
-    .form-control:focus {
-      background-color: #343a40;
-      color: #f8f9fa;
-      border-color: #0d6efd;
+      filter: brightness(1.1);
     }
     .back-btn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #22252a;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 12px;
-      border: 1px solid #444;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: var(--accent);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
       text-decoration: none;
+      font-size: 0.875rem;
+      transition: filter 0.2s;
     }
     .back-btn:hover {
-      background-color: #343a40;
+      filter: brightness(1.1);
+    }
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: stretch;
     }
 
-    /* Theme-specific styles (from Home.html) */
-    .theme-candy { background-color: #ff80bf; color: #fff; --accent: #ff3399; }
-    .theme-bleed { background-color: #e20074; color: #fff; --accent: #ff66b2; }
-    .theme-midnight { background-color: #002b36; color: #839496; --accent: #b58900; }
-    .theme-sea { background-color: #1c2526; color: #c3e6cb; --accent: #4db6ac; }
-    .theme-howl { background-color: #011627; color: #d6deeb; --accent: #82aaff; }
-    .theme-dawn { background-color: #2d2e2c; color: #fff; --accent: #ff7043; }
-    .theme-night { background-color: #1e222a; color: #abb2bf; --accent: #98c379; }
-    .theme-drank { background-color: #0f111a; color: #acb4c2; --accent: #5c6370; }
-    .theme-eve { background-color: #f4eefd; color: #4b294b; --accent: #d08770; }
-    .theme-gray { background-color: #3c3c3c; color: #cccccc; --accent: #87afaf; }
-    .theme-ocean { background-color: #2b303b; color: #c0c5ce; --accent: #8fa1b3; }
-    .theme-auro { background-color: #1b1e2b; color: #e6e6e6; --accent: #ff6f61; }
-    .theme-pm { background-color: #2c1d4b; color: #d7d7ff; --accent: #957fb8; }
-    .theme-ember { background-color: #1b1818; color: #d4b7a3; --accent: #ff6b6b; }
-    .theme-flare { background-color: #451804; color: #f4e6a2; --accent: #ff4500; }
-
-    /* Text color adjustments for readability */
-    .theme-candy, .theme-candy h1, .theme-candy .form-control, .theme-candy a,
-    .theme-eve, .theme-eve h1, .theme-eve .form-control, .theme-eve a {
-      color: #000;
-    }
-    .theme-bleed, .theme-bleed h1, .theme-bleed .form-control, .theme-bleed a,
-    .theme-midnight, .theme-midnight h1, .theme-midnight .form-control, .theme-midnight a,
-    .theme-sea, .theme-sea h1, .theme-sea .form-control, .theme-sea a,
-    .theme-howl, .theme-howl h1, .theme-howl .form-control, .theme-howl a,
-    .theme-dawn, .theme-dawn h1, .theme-dawn .form-control, .theme-dawn a,
-    .theme-night, .theme-night h1, .theme-night .form-control, .theme-night a,
-    .theme-drank, .theme-drank h1, .theme-drank .form-control, .theme-drank a,
-    .theme-gray, .theme-gray h1, .theme-gray .form-control, .theme-gray a,
-    .theme-ocean, .theme-ocean h1, .theme-ocean .form-control, .theme-ocean a,
-    .theme-auro, .theme-auro h1, .theme-auro .form-control, .theme-auro a,
-    .theme-pm, .theme-pm h1, .theme-pm .form-control, .theme-pm a,
-    .theme-ember, .theme-ember h1, .theme-ember .form-control, .theme-ember a,
-    .theme-flare, .theme-flare h1, .theme-flare .form-control, .theme-flare a {
-      color: #fff;
-    }
-
-    /* Ensure form-control background remains readable */
-    .theme-candy .form-control, .theme-eve .form-control {
-      background-color: #fff; /* White background for dark text */
-      border-color: #444;
-    }
-    .theme-candy .form-control:focus, .theme-eve .form-control:focus {
-      background-color: #fff;
-      color: #000;
-      border-color: #0d6efd;
-    }
-
-    /* Apply accent color to buttons */
-    .theme-candy .btn-primary:not(.back-btn),
-    .theme-bleed .btn-primary:not(.back-btn),
-    .theme-midnight .btn-primary:not(.back-btn),
-    .theme-sea .btn-primary:not(.back-btn),
-    .theme-howl .btn-primary:not(.back-btn),
-    .theme-dawn .btn-primary:not(.back-btn),
-    .theme-night .btn-primary:not(.back-btn),
-    .theme-drank .btn-primary:not(.back-btn),
-    .theme-eve .btn-primary:not(.back-btn),
-    .theme-gray .btn-primary:not(.back-btn),
-    .theme-ocean .btn-primary:not(.back-btn),
-    .theme-auro .btn-primary:not(.back-btn),
-    .theme-pm .btn-primary:not(.back-btn),
-    .theme-ember .btn-primary:not(.back-btn),
-    .theme-flare .btn-primary:not(.back-btn) {
-      background-color: var(--accent);
-      border-color: var(--accent);
-    }
-    .theme-candy .btn-primary:not(.back-btn):hover,
-    .theme-bleed .btn-primary:not(.back-btn):hover,
-    .theme-midnight .btn-primary:not(.back-btn):hover,
-    .theme-sea .btn-primary:not(.back-btn):hover,
-    .theme-howl .btn-primary:not(.back-btn):hover,
-    .theme-dawn .btn-primary:not(.back-btn):hover,
-    .theme-night .btn-primary:not(.back-btn):hover,
-    .theme-drank .btn-primary:not(.back-btn):hover,
-    .theme-eve .btn-primary:not(.back-btn):hover,
-    .theme-gray .btn-primary:not(.back-btn):hover,
-    .theme-ocean .btn-primary:not(.back-btn):hover,
-    .theme-auro .btn-primary:not(.back-btn):hover,
-    .theme-pm .btn-primary:not(.back-btn):hover,
-    .theme-ember .btn-primary:not(.back-btn):hover,
-    .theme-flare .btn-primary:not(.back-btn):hover {
-      background-color: var(--accent);
-      filter: brightness(85%);
-    }
-
-    /* Resize Add buttons to match input field height */
-    .btn-primary:not(.back-btn) {
-      padding: 0.25rem 0.5rem; /* Reduce padding to lower height */
-      font-size: 0.875rem; /* Smaller text to fit height */
-      line-height: 1.4; /* Adjust line-height to reduce height */
-      box-sizing: border-box; /* Ensure padding and borders are included */
-      height: 36px; /* Force height to match rendered input height */
-      color: #fff; /* Default for readability on --accent */
-    }
-
-    /* Adjust button text color for candy and eve themes */
-    .theme-candy .btn-primary:not(.back-btn),
-    .theme-eve .btn-primary:not(.back-btn) {
-      color: #000; /* Better contrast on lighter --accent colors */
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      body {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+      h4 {
+        font-size: 0.875rem;
+      }
+      .category-list {
+        padding: 0.5rem;
+      }
+      .subcategory-list {
+        margin-left: 0.5rem;
+      }
+      .form-control {
+        padding: 0.375rem;
+        font-size: 0.75rem;
+      }
+      .btn-primary, .back-btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+        height: 2rem;
+      }
+      .btn-danger {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.625rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container mx-auto">
     <h1>Manage Categories</h1>
 
     <!-- Add Main Category -->
     <div class="category-section">
       <h4>Add Main Category</h4>
-      <div class="input-group mb-3">
+      <div class="input-group">
         <input type="text" id="main-category-input" class="form-control" placeholder="Enter main category">
-        <button class="btn btn-primary" onclick="addMainCategory()">Add</button>
+        <button class="btn-primary" onclick="addMainCategory()">Add</button>
       </div>
     </div>
 
@@ -200,7 +171,7 @@
     </div>
   </div>
 
-    <!-- Back Button -->
+  <!-- Back Button -->
   <a href="Month.html" class="back-btn">Back</a>
 
   <script>
@@ -356,18 +327,18 @@
         categoryDiv.className = 'category-list';
 
         const header = document.createElement('div');
-        header.className = 'd-flex justify-content-between align-items-center';
+        header.className = 'flex justify-between items-center mb-2';
         header.innerHTML = `
-          <h5 class="mb-0">${mainCategory}</h5>
-          <button class="btn btn-danger btn-sm" onclick="deleteMainCategory('${mainCategory}')">Delete</button>
+          <h5 class="text-base font-semibold">${mainCategory}</h5>
+          <button class="btn-danger" onclick="deleteMainCategory('${mainCategory}')">Delete</button>
         `;
         categoryDiv.appendChild(header);
 
         const subCategoryInput = document.createElement('div');
-        subCategoryInput.className = 'input-group mt-2';
+        subCategoryInput.className = 'input-group mb-2';
         subCategoryInput.innerHTML = `
           <input type="text" id="sub-category-input-${mainCategory}" class="form-control" placeholder="Enter sub-category">
-          <button class="btn btn-primary" onclick="addSubCategory('${mainCategory}')">Add</button>
+          <button class="btn-primary" onclick="addSubCategory('${mainCategory}')">Add</button>
         `;
         categoryDiv.appendChild(subCategoryInput);
 
@@ -375,10 +346,10 @@
         subCategoryList.className = 'subcategory-list';
         categories[mainCategory].forEach(subCategory => {
           const subCategoryItem = document.createElement('div');
-          subCategoryItem.className = 'd-flex justify-content-between align-items-center';
+          subCategoryItem.className = 'flex justify-between items-center mb-1';
           subCategoryItem.innerHTML = `
-            <span>${subCategory}</span>
-            <button class="btn btn-danger btn-sm" onclick="deleteSubCategory('${mainCategory}', '${subCategory}')">Delete</button>
+            <span class="text-sm">${subCategory}</span>
+            <button class="btn-danger" onclick="deleteSubCategory('${mainCategory}', '${subCategory}')">Delete</button>
           `;
           subCategoryList.appendChild(subCategoryItem);
         });

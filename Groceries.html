@@ -185,7 +185,7 @@
     }
 
     /* Modal styles */
-    #infoModal {
+    #infoModal, #budgetModal {
       transition: opacity 0.3s ease;
     }
     .modal-content {
@@ -224,32 +224,45 @@
     #groceryListPanel {
       z-index: 30;
     }
-
     #groceryListPanel .table th {
       background-color: var(--accent, #4a90e2);
       color: #fff;
     }
-
     #groceryListPanel .table td {
       background-color: transparent;
       color: #fff;
     }
-
     #groceryListPanel input[type="text"] {
       background-color: rgba(255, 255, 255, 0.2);
       color: #fff;
       border: 1px solid #ccc;
     }
-
     #groceryListPanel input[type="checkbox"] {
       width: 16px;
       height: 16px;
       cursor: pointer;
     }
-
     .completed {
       text-decoration: line-through;
       opacity: 0.7;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #28a745;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .toast.show {
+      opacity: 1;
     }
   </style>
 </head>
@@ -265,7 +278,7 @@
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
       </svg>
     </div>
-    <!-- Modal -->
+    <!-- Info Modal -->
     <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
       <div class="modal-content p-6 w-full max-w-2xl">
         <h3 class="text-2xl mb-4">How to Use the Grocery Assistant</h3>
@@ -280,7 +293,7 @@
             <li>Click the green “+ Add Budget” button.</li>
             <li>Enter your total grocery budget in pesos (₱).</li>
             <li>This will appear at the top under Budget.</li>
-            <li>To edit click “+ Add Budget” button and enter new amount.</li>
+            <li>To edit, click “+ Add Budget” button and enter new amount.</li>
           </ul>
           <h3 class="text-xl font-bold mt-4">Add Grocery Items</h3>
           <ul class="list-disc pl-5">
@@ -304,9 +317,29 @@
         </button>
       </div>
     </div>
+    <!-- Budget Modal -->
+    <div id="budgetModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+      <div class="modal-content p-6 w-full max-w-md">
+        <h3 class="text-2xl mb-4">Set Budget</h3>
+        <div class="mb-4">
+          <label for="budgetInput" class="block text-lg mb-2">Budget Amount (₱):</label>
+          <input type="number" id="budgetInput" class="w-full p-2 border rounded" min="0" step="0.01" placeholder="Enter budget">
+        </div>
+        <div class="flex gap-4">
+          <button id="saveBudget" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex-1">
+            Save
+          </button>
+          <button id="closeBudgetModal" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex-1">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
     <section class="groceries-calculator-section">
       <div class="groceries-calculator-header">
-        <button class="btn-add-budget" onclick="addBudget()">+ Add Budget</button>
+        <button class="btn-add-budget" onclick="openBudgetModal()">+ Add Budget</button>
         <div class="groceries-calculator-info">
           <span>Budget: ₱ <span id="groceries-calculator-budget-amount">0.00</span></span>
           <span class="separator"> | </span>
@@ -380,8 +413,12 @@
     applyTheme(savedTheme);
 
     function applyTheme(theme) {
-      document.body.className = `min-h-screen flex flex-col theme-${theme}`;
-      document.getElementById('groceryListPanel').className = `fixed top-0 right-0 h-full w-80 theme-${theme} transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col`;
+      try {
+        document.body.className = `min-h-screen flex flex-col theme-${theme}`;
+        document.getElementById('groceryListPanel').className = `fixed top-0 right-0 h-full w-80 theme-${theme} transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col`;
+      } catch (e) {
+        console.error('Error applying theme:', e);
+      }
     }
 
     // Groceries calculator logic
@@ -390,212 +427,382 @@
 
     // Load data from localStorage
     function loadData() {
-      const savedData = localStorage.getItem('groceries_calculator');
-      if (savedData) {
-        groceriesCalculatorList = JSON.parse(savedData);
+      try {
+        const savedData = localStorage.getItem('groceries_calculator');
+        if (savedData) {
+          groceriesCalculatorList = JSON.parse(savedData).map(item => ({
+            description: item.description || '',
+            amount: parseFloat(item.amount) || 0,
+            quantity: parseInt(item.quantity) || 1,
+            total: (parseFloat(item.amount) || 0) * (parseInt(item.quantity) || 1)
+          }));
+        } else {
+          groceriesCalculatorList = [];
+        }
+        const savedBudget = localStorage.getItem('grocery_budget');
+        budget = savedBudget ? parseFloat(savedBudget) || 0 : 0;
+        displayGroceriesCalculator();
+        updateGroceriesCalculatorTotal();
+        updateGroceriesCalculatorItemCount();
+        updateBudgetDisplay();
+        updateDifferenceDisplay();
+      } catch (e) {
+        console.error('Error loading data:', e);
+        groceriesCalculatorList = [];
+        budget = 0;
+        displayGroceriesCalculator();
+        updateGroceriesCalculatorTotal();
+        updateGroceriesCalculatorItemCount();
+        updateBudgetDisplay();
+        updateDifferenceDisplay();
       }
-      const savedBudget = localStorage.getItem('grocery_budget');
-      if (savedBudget) {
-        budget = parseFloat(savedBudget) || 0;
-      }
-      displayGroceriesCalculator();
-      updateGroceriesCalculatorTotal();
-      updateGroceriesCalculatorItemCount();
-      updateBudgetDisplay();
-      updateDifferenceDisplay();
     }
 
     // Save data to localStorage
     function saveData() {
-      localStorage.setItem('groceries_calculator', JSON.stringify(groceriesCalculatorList));
-      localStorage.setItem('grocery_budget', budget.toString());
+      try {
+        localStorage.setItem('groceries_calculator', JSON.stringify(groceriesCalculatorList));
+        localStorage.setItem('grocery_budget', budget.toString());
+      } catch (e) {
+        console.error('Error saving data:', e);
+        showToast('Failed to save data', 'bg-red-500');
+      }
+    }
+
+    function openBudgetModal() {
+      try {
+        const modal = document.getElementById('budgetModal');
+        const input = document.getElementById('budgetInput');
+        input.value = budget.toFixed(2);
+        modal.classList.remove('hidden');
+      } catch (e) {
+        console.error('Error opening budget modal:', e);
+      }
     }
 
     function addBudget() {
-      const budgetInput = prompt('Enter your budget amount (₱):');
-      if (budgetInput !== null && !isNaN(budgetInput) && budgetInput >= 0) {
-        budget = parseFloat(budgetInput);
+      try {
+        const input = document.getElementById('budgetInput');
+        const budgetInput = parseFloat(input.value);
+        if (isNaN(budgetInput) || budgetInput < 0) {
+          showToast('Please enter a valid non-negative budget.', 'bg-red-500');
+          return;
+        }
+        budget = budgetInput;
         updateBudgetDisplay();
         updateDifferenceDisplay();
         saveData();
-      } else if (budgetInput !== null) {
-        alert('Please enter a valid number for the budget.');
+        document.getElementById('budgetModal').classList.add('hidden');
+        showToast('Budget updated successfully!', 'bg-green-500');
+      } catch (e) {
+        console.error('Error adding budget:', e);
+        showToast('Failed to update budget', 'bg-red-500');
       }
     }
 
     function updateBudgetDisplay() {
-      document.getElementById('groceries-calculator-budget-amount').innerText = budget.toFixed(2);
+      try {
+        document.getElementById('groceries-calculator-budget-amount').innerText = (isNaN(budget) ? 0 : budget).toFixed(2);
+      } catch (e) {
+        console.error('Error updating budget display:', e);
+      }
     }
 
     function updateDifferenceDisplay() {
-      const total = groceriesCalculatorList.reduce((sum, item) => sum + (item.amount * item.quantity), 0);
-      const difference = budget - total;
-      document.getElementById('groceries-calculator-difference').innerText = difference.toFixed(2);
+      try {
+        const total = groceriesCalculatorList.reduce((sum, item) => sum + (item.amount * item.quantity), 0);
+        const difference = budget - total;
+        document.getElementById('groceries-calculator-difference').innerText = (isNaN(difference) ? 0 : difference).toFixed(2);
+      } catch (e) {
+        console.error('Error updating difference display:', e);
+      }
     }
 
     function addGroceryCalculatorRow() {
-      const row = {
-        description: '',
-        amount: 0,
-        quantity: 1,
-        total: 0
-      };
-      groceriesCalculatorList.push(row);
-      displayGroceriesCalculator();
-      updateGroceriesCalculatorTotal();
-      updateGroceriesCalculatorItemCount();
-      updateDifferenceDisplay();
-      saveData();
-    }
-
-    function deleteGroceryCalculatorRow(index) {
-      if (confirm('Are you sure you want to delete this grocery entry?')) {
-        groceriesCalculatorList.splice(index, 1);
+      try {
+        const row = {
+          description: '',
+          amount: 0,
+          quantity: 1,
+          total: 0
+        };
+        groceriesCalculatorList.push(row);
         displayGroceriesCalculator();
         updateGroceriesCalculatorTotal();
         updateGroceriesCalculatorItemCount();
         updateDifferenceDisplay();
         saveData();
+        showToast('Grocery item added!', 'bg-green-500');
+      } catch (e) {
+        console.error('Error adding grocery row:', e);
+        showToast('Failed to add grocery item', 'bg-red-500');
+      }
+    }
+
+    function deleteGroceryCalculatorRow(index) {
+      try {
+        if (confirm('Are you sure you want to delete this grocery entry?')) {
+          groceriesCalculatorList.splice(index, 1);
+          displayGroceriesCalculator();
+          updateGroceriesCalculatorTotal();
+          updateGroceriesCalculatorItemCount();
+          updateDifferenceDisplay();
+          saveData();
+          showToast('Grocery item deleted!', 'bg-green-500');
+        }
+      } catch (e) {
+        console.error('Error deleting grocery row:', e);
+        showToast('Failed to delete grocery item', 'bg-red-500');
       }
     }
 
     function displayGroceriesCalculator() {
-      const groceriesCalculatorTableBody = document.getElementById('groceries-calculator-table-body');
-      groceriesCalculatorTableBody.innerHTML = '';
-
-      groceriesCalculatorList.forEach(({ description, amount, quantity, total }, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><input type="text" value="${description}" class="form-control" onchange="updateGroceriesCalculatorField(${index}, 'description', this.value)"></td>
-          <td><input type="number" value="${amount}" class="form-control" min="0" step="0.01" onchange="updateGroceriesCalculatorField(${index}, 'amount', this.value)"></td>
-          <td>
-            <div class="input-group">
-              <button class="quantity-btn" onclick="updateGroceriesCalculatorQuantity(${index}, -1)">-</button>
-              <input type="number" value="${quantity}" class="form-control text-center" min="1" onchange="updateGroceriesCalculatorField(${index}, 'quantity', this.value)" style="width: 60px;">
-              <button class="quantity-btn" onclick="updateGroceriesCalculatorQuantity(${index}, 1)">+</button>
-            </div>
-          </td>
-          <td>₱ ${(amount * quantity).toFixed(2)}</td>
-          <td><button class="btn-danger" onclick="deleteGroceryCalculatorRow(${index})">Delete</button></td>
-        `;
-        groceriesCalculatorTableBody.appendChild(row);
-      });
+      try {
+        console.log('Displaying groceries calculator:', groceriesCalculatorList);
+        const groceriesCalculatorTableBody = document.getElementById('groceries-calculator-table-body');
+        groceriesCalculatorTableBody.innerHTML = '';
+        groceriesCalculatorList.forEach(({ description, amount, quantity }, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><input type="text" value="${description}" class="form-control" onchange="updateGroceriesCalculatorField(${index}, 'description', this.value)"></td>
+            <td><input type="number" value="${amount}" class="form-control" min="0" step="0.01" onchange="updateGroceriesCalculatorField(${index}, 'amount', this.value)"></td>
+            <td>
+              <div class="input-group">
+                <button class="quantity-btn" onclick="updateGroceriesCalculatorQuantity(${index}, -1)">-</button>
+                <input type="number" value="${quantity}" class="form-control text-center" min="1" onchange="updateGroceriesCalculatorField(${index}, 'quantity', this.value)" style="width: 60px;">
+                <button class="quantity-btn" onclick="updateGroceriesCalculatorQuantity(${index}, 1)">+</button>
+              </div>
+            </td>
+            <td>₱ ${(amount * quantity).toFixed(2)}</td>
+            <td><button class="btn-danger" onclick="deleteGroceryCalculatorRow(${index})">Delete</button></td>
+          `;
+          groceriesCalculatorTableBody.appendChild(row);
+        });
+      } catch (e) {
+        console.error('Error displaying groceries calculator:', e);
+      }
     }
 
     function updateGroceriesCalculatorField(index, field, value) {
-      groceriesCalculatorList[index][field] = (field === 'amount' || field === 'quantity') ? parseFloat(value) || 0 : value;
-      if (field === 'amount' || field === 'quantity') {
-        groceriesCalculatorList[index].total = groceriesCalculatorList[index].amount * groceriesCalculatorList[index].quantity;
+      try {
+        if (field === 'amount' || field === 'quantity') {
+          const parsedValue = parseFloat(value);
+          if (isNaN(parsedValue) || parsedValue < (field === 'quantity' ? 1 : 0)) {
+            showToast(`Please enter a valid ${field}.`, 'bg-red-500');
+            return;
+          }
+          groceriesCalculatorList[index][field] = parsedValue;
+          groceriesCalculatorList[index].total = groceriesCalculatorList[index].amount * groceriesCalculatorList[index].quantity;
+        } else {
+          groceriesCalculatorList[index][field] = value;
+        }
+        displayGroceriesCalculator();
+        updateGroceriesCalculatorTotal();
+        updateGroceriesCalculatorItemCount();
+        updateDifferenceDisplay();
+        saveData();
+      } catch (e) {
+        console.error('Error updating groceries calculator field:', e);
+        showToast('Failed to update grocery item', 'bg-red-500');
       }
-      displayGroceriesCalculator();
-      updateGroceriesCalculatorTotal();
-      updateGroceriesCalculatorItemCount();
-      updateDifferenceDisplay();
-      saveData();
     }
 
     function updateGroceriesCalculatorQuantity(index, change) {
-      let quantity = groceriesCalculatorList[index].quantity + change;
-      if (quantity < 1) quantity = 1; // Prevent quantity from going below 1
-      groceriesCalculatorList[index].quantity = quantity;
-      groceriesCalculatorList[index].total = groceriesCalculatorList[index].amount * quantity;
-      displayGroceriesCalculator();
-      updateGroceriesCalculatorTotal();
-      updateGroceriesCalculatorItemCount();
-      updateDifferenceDisplay();
-      saveData();
+      try {
+        let quantity = groceriesCalculatorList[index].quantity + change;
+        if (quantity < 1) quantity = 1;
+        groceriesCalculatorList[index].quantity = quantity;
+        groceriesCalculatorList[index].total = groceriesCalculatorList[index].amount * quantity;
+        displayGroceriesCalculator();
+        updateGroceriesCalculatorTotal();
+        updateGroceriesCalculatorItemCount();
+        updateDifferenceDisplay();
+        saveData();
+      } catch (e) {
+        console.error('Error updating groceries calculator quantity:', e);
+        showToast('Failed to update quantity', 'bg-red-500');
+      }
     }
 
     function updateGroceriesCalculatorTotal() {
-      const total = groceriesCalculatorList.reduce((sum, item) => sum + (item.amount * item.quantity), 0);
-      document.getElementById('groceries-calculator-total-amount').innerText = total.toFixed(2);
+      try {
+        const total = groceriesCalculatorList.reduce((sum, item) => sum + (item.amount * item.quantity), 0);
+        document.getElementById('groceries-calculator-total-amount').innerText = (isNaN(total) ? 0 : total).toFixed(2);
+      } catch (e) {
+        console.error('Error updating groceries calculator total:', e);
+      }
     }
 
     function updateGroceriesCalculatorItemCount() {
-      const itemCount = groceriesCalculatorList.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('groceries-calculator-item-count').innerText = itemCount;
+      try {
+        const itemCount = groceriesCalculatorList.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('groceries-calculator-item-count').innerText = isNaN(itemCount) ? 0 : itemCount;
+      } catch (e) {
+        console.error('Error updating groceries calculator item count:', e);
+      }
     }
-
-    // Modal event listeners
-    document.getElementById('infoButton').addEventListener('click', () => {
-      document.getElementById('infoModal').classList.remove('hidden');
-    });
-
-    document.getElementById('closeInfoModal').addEventListener('click', () => {
-      document.getElementById('infoModal').classList.add('hidden');
-    });
 
     // Grocery List Panel logic
     let groceryList = [];
 
     function loadGroceryListData() {
-      const savedData = localStorage.getItem('grocery_list');
-      if (savedData) {
-        groceryList = JSON.parse(savedData);
+      try {
+        const savedData = localStorage.getItem('grocery_list');
+        if (savedData) {
+          groceryList = JSON.parse(savedData).map(item => ({
+            name: item.name || '',
+            completed: item.completed || false
+          }));
+        } else {
+          groceryList = [];
+        }
+        displayGroceryList();
+      } catch (e) {
+        console.error('Error loading grocery list data:', e);
+        groceryList = [];
+        displayGroceryList();
       }
-      displayGroceryList();
     }
 
     function saveGroceryListData() {
-      localStorage.setItem('grocery_list', JSON.stringify(groceryList));
+      try {
+        localStorage.setItem('grocery_list', JSON.stringify(groceryList));
+      } catch (e) {
+        console.error('Error saving grocery list data:', e);
+        showToast('Failed to save grocery list', 'bg-red-500');
+      }
     }
 
     function addGroceryListItem() {
-      groceryList.push({ name: '', completed: false });
-      displayGroceryList();
-      saveGroceryListData();
+      try {
+        groceryList.push({ name: '', completed: false });
+        displayGroceryList();
+        saveGroceryListData();
+        showToast('Grocery list item added!', 'bg-green-500');
+      } catch (e) {
+        console.error('Error adding grocery list item:', e);
+        showToast('Failed to add grocery list item', 'bg-red-500');
+      }
     }
 
     function updateGroceryListItem(index, field, value) {
-      groceryList[index][field] = value;
-      displayGroceryList();
-      saveGroceryListData();
+      try {
+        groceryList[index][field] = field === 'completed' ? value : value;
+        displayGroceryList();
+        saveGroceryListData();
+      } catch (e) {
+        console.error('Error updating grocery list item:', e);
+        showToast('Failed to update grocery list item', 'bg-red-500');
+      }
     }
 
     function deleteGroceryListItem(index) {
-      if (confirm('Are you sure you want to delete this grocery item?')) {
-        groceryList.splice(index, 1);
-        displayGroceryList();
-        saveGroceryListData();
+      try {
+        if (confirm('Are you sure you want to delete this grocery item?')) {
+          groceryList.splice(index, 1);
+          displayGroceryList();
+          saveGroceryListData();
+          showToast('Grocery list item deleted!', 'bg-green-500');
+        }
+      } catch (e) {
+        console.error('Error deleting grocery list item:', e);
+        showToast('Failed to delete grocery list item', 'bg-red-500');
       }
     }
 
     function displayGroceryList() {
-      const groceryListTableBody = document.getElementById('grocery-list-table-body');
-      groceryListTableBody.innerHTML = '';
-
-      groceryList.forEach((item, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>
-            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="updateGroceryListItem(${index}, 'completed', this.checked)">
-          </td>
-          <td>
-            <input type="text" value="${item.name}" class="${item.completed ? 'completed' : ''}" onchange="updateGroceryListItem(${index}, 'name', this.value)">
-          </td>
-          <td>
-            <button class="btn-danger" onclick="deleteGroceryListItem(${index})">Delete</button>
-          </td>
-        `;
-        groceryListTableBody.appendChild(row);
-      });
+      try {
+        console.log('Displaying grocery list:', groceryList);
+        const groceryListTableBody = document.getElementById('grocery-list-table-body');
+        groceryListTableBody.innerHTML = '';
+        groceryList.forEach((item, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>
+              <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="updateGroceryListItem(${index}, 'completed', this.checked)">
+            </td>
+            <td>
+              <input type="text" value="${item.name}" class="${item.completed ? 'completed' : ''}" onchange="updateGroceryListItem(${index}, 'name', this.value)">
+            </td>
+            <td>
+              <button class="btn-danger" onclick="deleteGroceryListItem(${index})">Delete</button>
+            </td>
+          `;
+          groceryListTableBody.appendChild(row);
+        });
+      } catch (e) {
+        console.error('Error displaying grocery list:', e);
+      }
     }
 
-    // Panel toggle functionality
+    // Toast notification
+    function showToast(message, bgColor) {
+      try {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${bgColor}`;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      } catch (e) {
+        console.error('Error showing toast:', e);
+      }
+    }
+
+    // Event listeners
+    document.getElementById('infoButton').addEventListener('click', () => {
+      try {
+        document.getElementById('infoModal').classList.remove('hidden');
+      } catch (e) {
+        console.error('Error opening info modal:', e);
+      }
+    });
+
+    document.getElementById('closeInfoModal').addEventListener('click', () => {
+      try {
+        document.getElementById('infoModal').classList.add('hidden');
+      } catch (e) {
+        console.error('Error closing info modal:', e);
+      }
+    });
+
+    document.getElementById('saveBudget').addEventListener('click', addBudget);
+
+    document.getElementById('closeBudgetModal').addEventListener('click', () => {
+      try {
+        document.getElementById('budgetModal').classList.add('hidden');
+      } catch (e) {
+        console.error('Error closing budget modal:', e);
+      }
+    });
+
     document.getElementById('openGroceryListPanel').addEventListener('click', () => {
-      document.getElementById('groceryListPanel').classList.remove('translate-x-full');
+      try {
+        document.getElementById('groceryListPanel').classList.remove('translate-x-full');
+      } catch (e) {
+        console.error('Error opening grocery list panel:', e);
+      }
     });
 
     document.getElementById('closeGroceryListPanel').addEventListener('click', () => {
-      document.getElementById('groceryListPanel').classList.add('translate-x-full');
+      try {
+        document.getElementById('groceryListPanel').classList.add('translate-x-full');
+      } catch (e) {
+        console.error('Error closing grocery list panel:', e);
+      }
     });
 
     document.getElementById('addGroceryListItem').addEventListener('click', addGroceryListItem);
 
     // Initialize groceries calculator and grocery list
     window.onload = function() {
-      loadData();
-      loadGroceryListData();
+      try {
+        loadData();
+        loadGroceryListData();
+      } catch (e) {
+        console.error('Error in window.onload:', e);
+      }
     };
   </script>
 </body>

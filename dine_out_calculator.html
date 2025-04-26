@@ -45,21 +45,7 @@
         }
 
         /* Apply accent color to buttons */
-        .theme-candy button:not(#back-btn),
-        .theme-bleed button:not(#back-btn),
-        .theme-midnight button:not(#back-btn),
-        .theme-sea button:not(#back-btn),
-        .theme-howl button:not(#back-btn),
-        .theme-dawn button:not(#back-btn),
-        .theme-night button:not(#back-btn),
-        .theme-drank button:not(#back-btn),
-        .theme-eve button:not(#back-btn),
-        .theme-gray button:not(#back-btn),
-        .theme-ocean button:not(#back-btn),
-        .theme-auro button:not(#back-btn),
-        .theme-pm button:not(#back-btn),
-        .theme-ember button:not(#back-btn),
-        .theme-flare button:not(#back-btn) {
+        button:not(#back-btn) {
             background-color: var(--accent);
         }
 
@@ -76,6 +62,23 @@
         .theme-candy label, .theme-eve label {
             color: #000;
         }
+        .theme-bleed input, .theme-midnight input, .theme-sea input,
+        .theme-howl input, .theme-dawn input, .theme-night input,
+        .theme-drank input, .theme-gray input, .theme-ocean input,
+        .theme-auro input, .theme-pm input, .theme-ember input,
+        .theme-flare input {
+            background-color: #2c2f36;
+            color: #fff;
+            border-color: #4b5563;
+        }
+        .theme-bleed input:focus, .theme-midnight input:focus, .theme-sea input:focus,
+        .theme-howl input:focus, .theme-dawn input:focus, .theme-night input:focus,
+        .theme-drank input:focus, .theme-gray input:focus, .theme-ocean input:focus,
+        .theme-auro input:focus, .theme-pm input:focus, .theme-ember input:focus,
+        .theme-flare input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
 
         /* Modal styles */
         #result-modal {
@@ -84,15 +87,25 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
-            border: 2px solid #4b5563;
             padding: 1.5rem;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 90%;
-            max-width: 400px;
+            max-width: 360px;
             z-index: 20;
+            border: 2px solid var(--accent);
+        }
+        .theme-candy #result-modal, .theme-eve #result-modal {
+            background: #fff;
             color: #1f2937;
+        }
+        .theme-bleed #result-modal, .theme-midnight #result-modal, .theme-sea #result-modal,
+        .theme-howl #result-modal, .theme-dawn #result-modal, .theme-night #result-modal,
+        .theme-drank #result-modal, .theme-gray #result-modal, .theme-ocean #result-modal,
+        .theme-auro #result-modal, .theme-pm #result-modal, .theme-ember #result-modal,
+        .theme-flare #result-modal {
+            background: #2c2f36;
+            color: #f3f4f6;
         }
         #result-modal.open {
             display: block;
@@ -110,140 +123,211 @@
         #modal-overlay.open {
             display: block;
         }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center">
-    <main class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 class="text-2xl font-bold text-center mb-6 text-gray-900">How much is my share?</h2>
+    <main class="p-6 rounded-lg shadow-lg w-full max-w-md" style="background: inherit;">
+        <h2 class="text-2xl font-bold text-center mb-6">How much is my share?</h2>
         <form id="calcForm" onsubmit="calculateShare(event)">
             <div class="mb-4">
-                <label for="totalAmount" class="block text-sm font-semibold text-gray-700">Total Bill Amount (₱):</label>
-                <input type="number" id="totalAmount" step="0.01" min="0" placeholder="e.g., 2500" required 
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <label for="totalAmount" class="block text-sm font-semibold" aria-label="Total Bill Amount in Philippine Peso">Total Bill Amount (₱):</label>
+                <input type="number" id="totalAmount" step="0.01" min="0" max="1000000" placeholder="e.g., 2500" required 
+                       class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--accent)]">
             </div>
-
             <div class="mb-4">
-                <label for="numPeople" class="block text-sm font-semibold text-gray-700">Number of People:</label>
-                <input type="number" id="numPeople" min="1" placeholder="e.g., 5" required 
-                       class="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <label for="numPeople" class="block text-sm font-semibold" aria-label="Number of People">Number of People:</label>
+                <input type="number" id="numPeople" min="1" max="1000" placeholder="e.g., 5" required 
+                       class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--accent)]">
             </div>
-
             <div class="flex space-x-4">
-                <button type="submit" class="flex-1 text-white p-2 rounded-md hover:bg-opacity-90">Calculate</button>
-                <button type="button" onclick="resetForm()" class="flex-1 text-white p-2 rounded-md hover:bg-opacity-90">Reset</button>
+                <button type="submit" class="flex-1 text-white p-3 rounded-md hover:bg-opacity-90" aria-label="Calculate share">Calculate</button>
+                <button type="button" onclick="resetForm()" class="flex-1 bg-gray-600 text-white p-3 rounded-md hover:bg-gray-700" aria-label="Reset form">Reset</button>
             </div>
         </form>
-        <div id="error" class="mt-4 p-2 bg-red-100 text-red-700 rounded-md hidden"></div>
+        <div id="error" class="mt-4 p-2 bg-red-100 text-red-700 rounded-md hidden" role="alert"></div>
     </main>
 
     <!-- Modal Overlay -->
     <div id="modal-overlay"></div>
 
     <!-- Result Modal -->
-    <div id="result-modal">
-        <h3 class="text-lg font-bold mb-4">Bill Breakdown</h3>
+    <div id="result-modal" role="dialog" aria-labelledby="modal-title">
+        <h3 id="modal-title" class="text-lg font-bold mb-4">Bill Breakdown</h3>
         <div id="modal-result" class="mb-4"></div>
         <div class="mb-4">
-            <label for="tipAmount" class="block text-sm font-semibold text-gray-700">Add Tip (₱):</label>
-            <input type="number" id="tipAmount" step="0.01" min="0" placeholder="e.g., 250" 
-                   class="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <label for="tipAmount" class="block text-sm font-semibold" aria-label="Add Tip in Philippine Peso">Add Tip (₱):</label>
+            <input type="number" id="tipAmount" step="0.01" min="0" max="1000000" placeholder="e.g., 250" 
+                   class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--accent)]">
         </div>
         <div class="flex space-x-4">
-            <button onclick="recalculateWithTip()" class="flex-1 text-white p-2 rounded-md hover:bg-opacity-90">Recalculate</button>
-            <button onclick="closeModal()" class="flex-1 bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700">Close</button>
+            <button onclick="recalculateWithTip()" class="flex-1 text-white p-3 rounded-md hover:bg-opacity-90" aria-label="Recalculate with tip">Recalculate</button>
+            <button onclick="closeModal()" class="flex-1 bg-gray-600 text-white p-3 rounded-md hover:bg-gray-700" aria-label="Close modal">Close</button>
         </div>
     </div>
 
-    <a href="Home.html" id="back-btn" class="fixed bottom-5 right-5 bg-gray-800 text-white py-2 px-3 rounded-xl border border-gray-600 hover:bg-gray-700">Back</a>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+    <a href="Home.html" id="back-btn" class="fixed bottom-5 right-5 text-white py-2 px-3 rounded-xl border hover:bg-opacity-90">Back</a>
 
     <script>
         // Load and apply saved theme
         const savedTheme = localStorage.getItem('selectedTheme') || 'candy';
         document.body.className = `min-h-screen flex items-center justify-center theme-${savedTheme}`;
+        document.getElementById('back-btn').style.backgroundColor = 'var(--accent)';
+        document.getElementById('back-btn').style.borderColor = 'var(--accent)';
+
+        function showToast(message, bgColor) {
+            try {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast ${bgColor}`;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            } catch (e) {
+                console.error('Error showing toast:', e);
+            }
+        }
 
         function resetForm() {
-            document.getElementById('calcForm').reset();
-            document.getElementById('error').classList.add('hidden');
-            document.getElementById('error').textContent = '';
+            try {
+                document.getElementById('calcForm').reset();
+                document.getElementById('error').classList.add('hidden');
+                document.getElementById('error').textContent = '';
+                closeModal();
+                showToast('Form reset successfully!', 'bg-green-500');
+            } catch (e) {
+                console.error('Error resetting form:', e);
+                showToast('Failed to reset form', 'bg-red-500');
+            }
         }
 
         function calculateShare(event) {
-            event.preventDefault();
-            
-            const totalAmount = parseFloat(document.getElementById('totalAmount').value);
-            const numPeople = parseInt(document.getElementById('numPeople').value);
-            const errorDiv = document.getElementById('error');
-            const modal = document.getElementById('result-modal');
-            const modalOverlay = document.getElementById('modal-overlay');
-            const modalResult = document.getElementById('modal-result');
-            const tipAmountInput = document.getElementById('tipAmount');
+            try {
+                event.preventDefault();
+                const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+                const numPeople = parseInt(document.getElementById('numPeople').value);
+                const errorDiv = document.getElementById('error');
+                const modal = document.getElementById('result-modal');
+                const modalOverlay = document.getElementById('modal-overlay');
+                const modalResult = document.getElementById('modal-result');
+                const tipAmountInput = document.getElementById('tipAmount');
 
-            // Reset error display
-            errorDiv.classList.add('hidden');
-            errorDiv.textContent = '';
+                // Reset error display
+                errorDiv.classList.add('hidden');
+                errorDiv.textContent = '';
 
-            // Validate inputs
-            if (isNaN(totalAmount) || totalAmount < 0) {
-                errorDiv.textContent = 'Please enter a valid total bill amount.';
-                errorDiv.classList.remove('hidden');
-                return;
+                // Validate inputs
+                if (isNaN(totalAmount) || totalAmount < 0 || totalAmount > 1000000) {
+                    errorDiv.textContent = 'Please enter a valid total bill amount (0 to 1,000,000).';
+                    errorDiv.classList.remove('hidden');
+                    showToast('Invalid bill amount', 'bg-red-500');
+                    return;
+                }
+                if (isNaN(numPeople) || numPeople <= 0 || numPeople > 1000) {
+                    errorDiv.textContent = 'Please enter a valid number of people (1 to 1,000).';
+                    errorDiv.classList.remove('hidden');
+                    showToast('Invalid number of people', 'bg-red-500');
+                    return;
+                }
+
+                // Calculate initial share
+                const sharePerPerson = (totalAmount / numPeople).toFixed(2);
+                const defaultTip = (totalAmount * 0.1).toFixed(2);
+
+                // Show modal with results
+                modalResult.innerHTML = `
+                    Total Bill: ₱${totalAmount.toFixed(2)}<br>
+                    Each Person's Share: ₱${sharePerPerson}
+                `;
+                tipAmountInput.value = defaultTip;
+                modal.classList.add('open');
+                modalOverlay.classList.add('open');
+                tipAmountInput.focus();
+                showToast('Calculation complete!', 'bg-green-500');
+            } catch (e) {
+                console.error('Error calculating share:', e);
+                showToast('Failed to calculate share', 'bg-red-500');
             }
-            if (isNaN(numPeople) || numPeople <= 0) {
-                errorDiv.textContent = 'Please enter a valid number of people.';
-                errorDiv.classList.remove('hidden');
-                return;
-            }
-
-            // Calculate initial share
-            const sharePerPerson = totalAmount / numPeople;
-            const defaultTip = totalAmount * 0.1; // 10% of total bill
-
-            // Show modal with results
-            modalResult.innerHTML = `
-                Total Bill: ₱${totalAmount.toFixed(2)}<br>
-                Each Person's Share: ₱${sharePerPerson.toFixed(2)}
-            `;
-            tipAmountInput.value = defaultTip.toFixed(2); // Set default tip to 10%
-            modal.classList.add('open');
-            modalOverlay.classList.add('open');
         }
 
         function recalculateWithTip() {
-            const totalAmount = parseFloat(document.getElementById('totalAmount').value);
-            const numPeople = parseInt(document.getElementById('numPeople').value);
-            const tipAmount = parseFloat(document.getElementById('tipAmount').value) || 0;
-            const modalResult = document.getElementById('modal-result');
+            try {
+                const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+                const numPeople = parseInt(document.getElementById('numPeople').value);
+                const tipAmount = parseFloat(document.getElementById('tipAmount').value) || 0;
+                const modalResult = document.getElementById('modal-result');
 
-            // Validate tip
-            if (tipAmount < 0 || isNaN(tipAmount)) {
+                // Validate tip
+                if (isNaN(tipAmount) || tipAmount < 0 || tipAmount > 1000000) {
+                    modalResult.innerHTML = `
+                        <p class="text-red-700">Please enter a valid tip amount (0 to 1,000,000).</p>
+                        Total Bill: ₱${totalAmount.toFixed(2)}<br>
+                        Each Person's Share: ₱${(totalAmount / numPeople).toFixed(2)}
+                    `;
+                    showToast('Invalid tip amount', 'bg-red-500');
+                    return;
+                }
+
+                // Calculate with tip
+                const totalWithTip = (totalAmount + tipAmount).toFixed(2);
+                const sharePerPerson = (totalWithTip / numPeople).toFixed(2);
+
+                // Update modal results
                 modalResult.innerHTML = `
-                    <p class="text-red-700">Please enter a valid tip amount.</p>
                     Total Bill: ₱${totalAmount.toFixed(2)}<br>
-                    Each Person's Share: ₱${(totalAmount / numPeople).toFixed(2)}
+                    Tip Amount: ₱${tipAmount.toFixed(2)}<br>
+                    Total with Tip: ₱${totalWithTip}<br>
+                    Each Person's Share: ₱${sharePerPerson}
                 `;
-                return;
+                showToast('Recalculated with tip!', 'bg-green-500');
+            } catch (e) {
+                console.error('Error recalculating with tip:', e);
+                showToast('Failed to recalculate', 'bg-red-500');
             }
-
-            // Calculate with tip
-            const totalWithTip = totalAmount + tipAmount;
-            const sharePerPerson = totalWithTip / numPeople;
-
-            // Update modal results
-            modalResult.innerHTML = `
-                Total Bill: ₱${totalAmount.toFixed(2)}<br>
-                Tip Amount: ₱${tipAmount.toFixed(2)}<br>
-                Total with Tip: ₱${totalWithTip.toFixed(2)}<br>
-                Each Person's Share: ₱${sharePerPerson.toFixed(2)}
-            `;
         }
 
         function closeModal() {
-            document.getElementById('result-modal').classList.remove('open');
-            document.getElementById('modal-overlay').classList.remove('open');
+            try {
+                document.getElementById('result-modal').classList.remove('open');
+                document.getElementById('modal-overlay').classList.remove('open');
+            } catch (e) {
+                console.error('Error closing modal:', e);
+                showToast('Failed to close modal', 'bg-red-500');
+            }
         }
 
         // Close modal when clicking overlay
         document.getElementById('modal-overlay').addEventListener('click', closeModal);
+
+        // Handle Enter key for tip recalculation
+        document.getElementById('tipAmount').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                recalculateWithTip();
+            }
+        });
     </script>
 </body>
 </html>
