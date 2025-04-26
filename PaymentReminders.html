@@ -301,6 +301,40 @@
             width: 20px;
             height: 20px;
         }
+        .bottom-left-info {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2c2f36;
+            color: #f8f9fa;
+            padding: 0.625rem 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            font-size: 0.875rem;
+            text-align: center;
+            z-index: 1000;
+        }
+        .bottom-left-info p {
+            margin: 0.25rem 0;
+        }
+        body[class*="theme-"] .bottom-left-info {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .theme-candy .bottom-left-info, .theme-eve .bottom-left-info {
+            background-color: #fff;
+            color: #1f2937;
+            border: 1px solid #ccc;
+        }
+        @media (max-width: 640px) {
+            .bottom-left-info {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+                width: 90%;
+                max-width: 300px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -368,8 +402,8 @@
                     <input type="text" id="description" placeholder="e.g., Electricity Bill" required>
                 </div>
                 <div class="form-group">
-                    <label for="amount">Amount ($)</label>
-                    <input type="number" id="amount" placeholder="e.g., 100.00" step="0.01" required>
+                    <label for="amount">Amount (₱)</label>
+                    <input type="number" id="amount" placeholder="e.g., 5000.00" step="0.01" required>
                 </div>
                 <div class="form-group">
                     <label for="dueDate">Due Date</label>
@@ -382,12 +416,16 @@
             <div class="info-modal-content" onclick="event.stopPropagation()">
                 <h2>Monthly Payment Tracker Guide</h2>
                 <p><strong>Add Payment:</strong> Click plus icon above Status column, enter Description, Amount, Due Date, click "Add Payment." All fields required.</p>
-                <p><strong>Filter Payments:</strong> Select month or year (2025–2050) from dropdowns (5 options, scroll for more). Use "All" to view all.</p>
+                <p><strong>Filter Payments:</strong> Select month or year (2025–2050) from dropdownslinker for more.</p>
                 <p><strong>Toggle Status:</strong> Click "Paid" (green) or "Unpaid" (red) in Status to switch.</p>
                 <p><strong>Delete Payment:</strong> Click red "-" button in Action to remove.</p>
                 <p><strong>Info:</strong> Click info icon above Action column for this guide.</p>
                 <button class="close-info-button" onclick="closeInfoModal()">Close</button>
             </div>
+        </div>
+        <div class="bottom-left-info">
+            <p>Paid: ₱<span id="paidTotal">0.00</span></p>
+            <p>Unpaid: ₱<span id="unpaidTotal">0.00</span></p>
         </div>
         <div class="button-container">
             <div class="toggle-button-container">
@@ -571,7 +609,17 @@
                 return monthMatch && yearMatch;
             });
 
+            // Calculate totals
+            let paidTotal = 0;
+            let unpaidTotal = 0;
+
             filteredPayments.forEach((payment, index) => {
+                if (payment.paid) {
+                    paidTotal += payment.amount;
+                } else {
+                    unpaidTotal += payment.amount;
+                }
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>
@@ -580,12 +628,16 @@
                         </span>
                     </td>
                     <td>${payment.description}</td>
-                    <td>$${payment.amount.toFixed(2)}</td>
+                    <td>₱${payment.amount.toFixed(2)}</td>
                     <td>${payment.dueDate}</td>
                     <td><button class="action-button delete" onclick="deletePayment(${index})">-</button></td>
                 `;
                 paymentList.appendChild(row);
             });
+
+            // Update bottom-left-info totals
+            document.getElementById('paidTotal').textContent = paidTotal.toFixed(2);
+            document.getElementById('unpaidTotal').textContent = unpaidTotal.toFixed(2);
         }
 
         // Initial render
